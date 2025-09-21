@@ -7,17 +7,19 @@ export interface ProductsResponse {
 }
 
 export interface Product {
-  id: string;
-  title: string;
-  price: number;
-  description: string;
-  slug: string;
-  stock: number;
-  sizes: Size[];
-  gender: Gender;
-  tags: string[];
-  images: string[];
-  user: User;
+  id: number,
+  nombre: string,
+  precio_venta: number,
+  precio_compra: number,
+  id_categoria: number,
+  categoria: string,
+  codigo_barras: string,
+  codigo_interno: string,
+  id_empresa: number,
+  sevende_por: string,
+  maneja_intenarios: boolean,
+  maneja_multiprecios: boolean,
+  foto: string,
 }
 
 export enum Gender {

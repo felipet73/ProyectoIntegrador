@@ -1,4 +1,90 @@
-import { HttpClient } from '@angular/common/http';
+import { computed, inject, Injectable, signal } from '@angular/core';
+import { SupabaseService } from 'src/app/supabase/supabase.service';
+
+import { Empresa } from '@store-front/components/interfaces/empresa.interface';
+import { Product } from '@products/interfaces/product.interface';
+
+
+@Injectable({ providedIn: 'root' })
+export class ProductsService {
+  private _producto = signal<Product | null>(null);
+  private _token = signal<string | null>(localStorage.getItem('token'));
+  private supabaseService:SupabaseService = inject(SupabaseService);
+  producto  = computed(() => this._producto());
+  token = computed(this._token);
+  public miEmpresa:Empresa|null  = JSON.parse(localStorage.getItem('MiEmpresa') || "") || null;
+  public acutualEmpresa:Empresa|null  = JSON.parse(localStorage.getItem('ActualEmpresa') || "") || null;
+  constructor() {}
+
+  // Obtener todos
+  async getAllProductos(): Promise<Product[]> {
+    const { data, error } = await this.supabaseService.client.from('productos').select('*').eq('id_empresa', this.acutualEmpresa?.id || "");
+    if (error) throw error;
+    return data as Product[];
+  }
+
+  // Obtener producto por id
+  async getProductoPorId(id: string): Promise<Product | null> {
+    const { data, error } = await this.supabaseService.client.from('productos').select('*').eq('id', id).single();
+    if (error) throw error;
+    return data as Product;
+  }
+
+  // Insertar nuevo producto
+  async nuevoProucto(producto: Product): Promise<Product> {
+
+    var { data, error } = await this.supabaseService.client.rpc('get_next_producto_id');
+    if (error) throw error;
+    console.log("Siguiente ID:", data);
+
+    producto.id = data;
+    /*if (!producto.tipo || producto.tipo === '') producto.tipo = 'CLIENTE';
+    if (!producto.fecha_registro) producto.fecha_registro = new Date();*/
+    var { data, error } = await this.supabaseService.client
+      .from('productos')
+      .insert([producto])
+      .select()
+      .single();
+    if (error) throw error;
+    return data as Product;
+  }
+
+  // Modifica producto por id
+  async editarProducto(id: number, producto: Partial<Product>): Promise<Product> {
+    const { data, error } = await this.supabaseService.client
+      .from('productos')
+      .update(producto)
+      .eq('id', id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data as Product;
+  }
+
+  // Eliminar producto por id
+  async eliminarProducto(id: number): Promise<void> {
+    const { error } = await this.supabaseService.client
+      .from('productos')
+      .delete()
+      .eq('id', id);
+    if (error) throw error;
+  }
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+/*import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { User } from '@auth/interfaces/user.interface';
 import {
@@ -94,7 +180,7 @@ export class ProductsService {
   }
 
   updateProduct(
-    id: string,
+    id: number,
     productLike: Partial<Product>,
     imageFileList?: FileList
   ): Observable<Product> {
@@ -161,4 +247,4 @@ export class ProductsService {
       .post<{ fileName: string }>(`${baseUrl}/files/product`, formData)
       .pipe(map((resp) => resp.fileName));
   }
-}
+}*/

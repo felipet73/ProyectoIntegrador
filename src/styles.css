@@ -18,7 +18,7 @@ body {
 }
 
 .swal2-popup {
-    background: black !important;
+    background: var(--color-sf-content-bg-color-alt1) !important;
     color: white !important;
 }
 

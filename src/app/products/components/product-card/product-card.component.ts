@@ -6,15 +6,15 @@ import { ProductImagePipe } from '@products/pipes/product-image.pipe';
 
 @Component({
   selector: 'product-card',
-  imports: [RouterLink, SlicePipe, ProductImagePipe],
+ // imports: [RouterLink, SlicePipe, ProductImagePipe],
   templateUrl: './product-card.component.html',
 })
 export class ProductCardComponent {
-  product = input.required<Product>();
+  // product = input.required<Product>();
 
-  imageUrl = computed(() => {
-    return `http://localhost:3000/api/files/product/${
-      this.product().images[0]
-    }`;
-  });
+  // imageUrl = computed(() => {
+  //   return `http://localhost:3000/api/files/product/${
+  //     this.product().images[0]
+  //   }`;
+  // });
 }

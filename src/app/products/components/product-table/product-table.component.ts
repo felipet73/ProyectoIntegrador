@@ -13,44 +13,10 @@ import { ContextMenuItem, GroupSettingsModel, EditSettingsModel,  SelectionServi
 import { ChipListModule, ClickEventArgs } from '@syncfusion/ej2-angular-buttons';
 import { NgIf } from '@angular/common';
 import { copy } from '@syncfusion/ej2-angular-spreadsheet';
-
-
-export let productoDetail: Object[] = [
-   {
-       "id": 1,
-       "nombre": "John",
-       "precio_venta": 10.32,
-       "precio_compra": 8.35,
-       "id_categoria": 1,
-       "categoria": "Granos",
-       "codigo_barras": "9995555",
-       "codigo_interno": "001",
-       "id_empresa": 1,
-       "sevende_por": "unidad",
-       "maneja_intenarios": true,
-       "maneja_multiprecios": true,
-       "foto": "",
-   },
-   {
-       "id": 2,
-       "nombre": "Producto 2",
-       "precio_venta": 10.32,
-       "precio_compra": 8.35,
-       "id_categoria": 1,
-       "categoria": "Granos",
-       "codigo_barras": "9995555",
-       "codigo_interno": "001",
-       "id_empresa": 1,
-       "sevende_por": "unidad",
-       "maneja_intenarios": true,
-       "maneja_multiprecios": true,
-       "foto": "",
-   },
-];
-
-
-
-
+import { Product } from '@products/interfaces/product.interface';
+import Swal from 'sweetalert2';
+import { ProductsService } from '@products/services/products.service';
+import { Empresa } from '@store-front/components/interfaces/empresa.interface';
 
 
 @Component({
@@ -82,15 +48,22 @@ export class ProducTableComponent {
     public formatoptions!: Object;
     public contextMenuItems!: ContextMenuItemModel[]|ContextMenuItem[];
     public selectOptions!: Object;
-    
-    
+
+    public seleccionActual:Product[] = [];
+    public idsToDelete:number[]=[];
+
     public viewchecks = signal(false);
 
-    constructor() {
+    public miEmpresa:Empresa|null  = JSON.parse(localStorage.getItem('MiEmpresa') || "") || null;
+    public actualEmpresa:Empresa|null  = JSON.parse(localStorage.getItem('ActualEmpresa') || "") || null;
 
-    }
+    constructor(private productoService: ProductsService) {}
 
     ngOnInit(): void {
+
+
+
+        this.cargarProductos();
 
         this.editSettings = {  allowEditing: true, allowAdding: true, allowDeleting: true , newRowPosition: 'Top', /*showAddNewRow: true ,*/  mode: 'Dialog'};
         this.toolbar = ['[--Productos--]','Add', 'Edit', 'Delete', 'Update', 'Cancel', 'Search', 'PdfExport', 'ExcelExport', 'CsvExport', '+ Categoria'];
@@ -106,11 +79,7 @@ export class ProducTableComponent {
             { text: '📄 Seleccionar Imagen ..', target: '.e-content', id: 'selImagen' },
             { text: '+ Categoria', target: '.e-content', id: 'nuevaCategoria' }
           ];
-        //this.selectOptions = { persistSelection: true,  };
-      
-      
-      this.data = productoDetail;
-      
+
       this.filterSettings = {
             type: 'CheckBox',
             operators: {
@@ -173,22 +142,35 @@ export class ProducTableComponent {
         }
     }
 
-    public onChange(e: ChangeEventArgs): void {
-            let gridInstance: any = (<any>document.getElementById('grid')).ej2_instances[0];
-            (gridInstance.editSettings as any).newRowPosition = <NewRowPosition>this.dropDown.value;
-            gridInstance.refresh();
+    async cargarProductos() {
+        var productosResp:any = await this.productoService.getAllProductos();
+        console.log('productos recibidos', productosResp);
+        if (productosResp){
+          this.data = productosResp;
+        }else{
+          this.data = [];
         }
+      }
 
-    actionBegin(args: any) :void {
-        let gridInstance: any = (<any>document.getElementById('grid')).ej2_instances[0];
-        if (args.requestType === 'save') {
-            if (gridInstance.pageSettings.currentPage !== 1 && gridInstance.editSettings.newRowPosition === 'Top') {
-                args.index = (gridInstance.pageSettings.currentPage * gridInstance.pageSettings.pageSize) - gridInstance.pageSettings.pageSize;
-            } else if (gridInstance.editSettings.newRowPosition === 'Bottom') {
-                args.index = (gridInstance.pageSettings.currentPage * gridInstance.pageSettings.pageSize) - 1;
-            }
-        }
-    }
+      async agregar(producto: Product) {
+        if (!producto.id_empresa || producto.id_empresa === 0)
+          producto.id_empresa = this.actualEmpresa?.id || 0;
+        const productoCreado = await this.productoService.nuevoProucto(producto);
+        console.log('Respuesta de producto agregado', productoCreado);
+        this.cargarProductos();
+      }
+
+      async editar(producto:Product) {
+        const productoEditado = await this.productoService.editarProducto(producto.id || 0, producto);
+        console.log('Respuesta de producto editado', productoEditado);
+      }
+
+
+      async eliminar(id?: number) {
+        if (!id) return;
+        await this.productoService.eliminarProducto(id);
+        //this.productos = this.productos.filter(c => c.id !== id);*/
+      }
 
     toolbarClick(args: any) {
       console.log('clicking', args)
@@ -201,11 +183,14 @@ export class ProducTableComponent {
       if (args.item.text === "CSV Export") {
           this.grid?.csvExport();
       }
+      if (args.item.text === "Eliminar") {
+            this.idsToDelete = this.seleccionActual ? [...this.seleccionActual.map(x => x.id || 0)] : [];
+          }
       if (args.item.text === "+ Categoria") {
           alert('Nueva Categoria')
       }
 
-  }
+   }
 
   public onContextMenuClick(args: ContextMenuClickEventArgs): void {
     const row = args.rowInfo?.rowData; // Datos de la fila sobre la que se hizo click
@@ -213,7 +198,7 @@ export class ProducTableComponent {
     switch (args.item.id) {
       case 'selImagen':
         //alert(`Detalle de: ${row?.Nombre} - Precio: ${row?.Precio}`);
-        
+
         break;
 
       case 'nuevaCategoria':
@@ -223,6 +208,51 @@ export class ProducTableComponent {
         break;
     }
   }
+
+  public eventoOcurrido(ev:any, nombre:string){
+          console.log('En evento action complete ' + nombre, ev);
+          if (ev.action === "edit"){
+            if (ev.requestType === "save"){
+              this.editar(ev.data);
+            }
+          }
+          if (ev.action === "add"){
+            if (ev.requestType === "save"){
+              this.agregar(ev.data);
+            }
+          }
+
+          if (ev.type === "actionComplete"){
+            if (ev.requestType === "delete"){
+
+              console.log(this.seleccionActual, 'seleccion actual');
+
+              if (this.idsToDelete && this.idsToDelete?.length > 0){
+                Swal.fire({
+                  title: '¿Eliminar registros(s)?',
+                  showCancelButton: true,
+                  confirmButtonText: 'Sí, eliminar',
+                  cancelButtonText: 'Cancelar'
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                      this.idsToDelete.forEach( (idEl:number) => {
+                          this.eliminar(idEl);
+                        });
+                        Swal.fire('Eliminado!', 'Registros fueron eliminado.', 'success');
+                    } else {
+                      //this.cargarProductos();
+                      Swal.fire('Los cambios no fueron guardados', '', 'info');
+                    }
+                  });
+                }
+            }
+          }
+        }
+
+        public select(ev:any){
+            this.seleccionActual = this.grid?.getSelectedRecords() as Product[];
+            console.log('Seleccionados:', this.seleccionActual);
+          }
 
 }
 

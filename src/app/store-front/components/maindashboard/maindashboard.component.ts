@@ -44,7 +44,6 @@ export class MainDashboardComponent {
     public dataEmpresas!: { [key: string]: Object }[];
     //constructor() {}
 
-
     // Sidebar data
     public enableDock: boolean = true;
     public type: string = 'Over';
@@ -282,11 +281,12 @@ export class MainDashboardComponent {
               console.log(empresas)
               if (empresas && empresas?.length>0){
                 localStorage.setItem('MiEmpresa',JSON.stringify(empresas[0]));
+                localStorage.setItem('ActualEmpresa',JSON.stringify(empresas[0]));
                 this.dataEmpresas = empresas.map(elemento => {
                   return { text: 'Su Empresa :' + elemento.nombre, pic: 'javascript', description: elemento.iso + ' - email:' + elemento.correo + ' direccion ' +elemento.direccion_fiscal }
                 })
               }
-            });
+      });
 
     }
 }

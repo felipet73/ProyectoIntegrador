@@ -9,7 +9,7 @@ export interface EmpresasResponse {
 }
 
 export interface Empresa {
-  id?: string;
+  id?: number;
   nombre: string;
   id_fiscal: string;
   direccion_fiscal: string;

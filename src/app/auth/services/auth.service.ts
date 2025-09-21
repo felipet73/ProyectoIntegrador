@@ -1,6 +1,4 @@
-import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { environment } from 'src/environments/environment';
 import { catchError, from, map, Observable, of, tap } from 'rxjs';
 import { rxResource } from '@angular/core/rxjs-interop';
 
@@ -16,11 +14,9 @@ type AuthStatus = 'checking' | 'authenticated' | 'not-authenticated';
 @Injectable({ providedIn: 'root' })
 export class AuthService {
   private _authStatus = signal<AuthStatus>('checking');
-  //private _authStatus = signal<AuthStatus>('authenticated');
   private _user = signal<User | null>(null);
   private _token = signal<string | null>(localStorage.getItem('token'));
   private supabaseService:SupabaseService = inject(SupabaseService);
-  private http = inject(HttpClient);
 
   checkStatusResource = rxResource({
     loader: () => this.checkStatus(),

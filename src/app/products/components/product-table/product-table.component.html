@@ -5,10 +5,10 @@
 
 </style>
 <div class="control-section" style="height: 90vh;margin-top:0px;">
-    <ejs-grid #grid [locale]='"es-ES"' [dataSource]='data' [allowSorting]='true' [allowFiltering]='true' [filterSettings]='filterSettings' (actionBegin)='actionBegin($event)'
-    allowPaging='true' [pageSettings]='pageSettings' [editSettings]='editSettings' [toolbar]='toolbar' 
-    allowPdfExport='true' allowExcelExport="true" [allowExcelExport]="true" [allowPdfExport]="true" [contextMenuItems]="contextMenuItems"  (toolbarClick)="toolbarClick($event)" 
-    (contextMenuClick)="onContextMenuClick($event)"
+    <ejs-grid #grid [locale]='"es-ES"' [dataSource]='data' [allowSorting]='true' [allowFiltering]='true' [filterSettings]='filterSettings'
+    allowPaging='true' [pageSettings]='pageSettings' [editSettings]='editSettings' [toolbar]='toolbar'
+    allowPdfExport='true' allowExcelExport="true" [allowExcelExport]="true" [allowPdfExport]="true" [contextMenuItems]="contextMenuItems"  (toolbarClick)="toolbarClick($event)"
+    (contextMenuClick)="onContextMenuClick($event)" (actionComplete)="eventoOcurrido($event,'')" (rowSelected)="select($event)" (rowDeselected)="select($event)"
     >
         <e-columns>
           @if(this.viewchecks()){
@@ -34,12 +34,12 @@
             <e-column field='precio_venta' headerText='$ Venta' width='90'></e-column>
             <!-- <e-column field='id_categoria' headerText='IdCat' width='0'></e-column> -->
             <e-column field='categoria' headerText='Categoria' width='120'></e-column>
-            
+
             <e-column field='codigo_barras' headerText='Codigo Barras' width='90'></e-column>
             <e-column field='codigo_interno' headerText='Codigo Interno' width='90'></e-column>
             <!-- <e-column field='id_empresa' headerText='Experience' width='0'></e-column> -->
             <e-column field='sevende_por' headerText='Unidad' width='120'></e-column>
-            <e-column field='maneja_intenarios' headerText='Inventarios' width='80'></e-column>
+            <e-column field='maneja_inventarios' headerText='Inventarios' width='80'></e-column>
             <e-column field='maneja_multiprecios' headerText='Multiprecios' width='80'></e-column>
             <!-- <e-column field='AssetKit' headerText='Asset Kit' width='180' [filter]= 'filter'>
                 <ng-template #template let-data>

@@ -10,12 +10,12 @@ import { PaginationService } from '@shared/components/pagination/pagination.serv
 
 @Component({
   selector: 'app-gender-page',
-  imports: [ProductCardComponent, PaginationComponent],
+  //imports: [ProductCardComponent, PaginationComponent],
   templateUrl: './gender-page.component.html',
 })
 export class GenderPageComponent {
   route = inject(ActivatedRoute);
-  productsService = inject(ProductsService);
+  /*productsService = inject(ProductsService);
   paginationService = inject(PaginationService);
 
   gender = toSignal(this.route.params.pipe(map(({ gender }) => gender)));
@@ -31,5 +31,5 @@ export class GenderPageComponent {
         offset: request.page * 9,
       });
     },
-  });
+  });*/
 }

@@ -1,48 +1,25 @@
 
 <div class="control-section" style="margin-top: 0px; height:90vh;">
     <div class="col-lg-9">
-        <ejs-grid #normalgrid id='Normalgrid' title="Clientes/Proveedores" [locale]='"es-ES"' [dataSource]='data' allowPaging='true' [allowSorting]='true' [allowFiltering]='true' [filterSettings]='filterSettings' [pageSettings]='pageSettings' [editSettings]='editSettings' [toolbar]='toolbar' (actionBegin)='actionBegin($event)'
-        allowPdfExport='true' allowExcelExport="true" [allowExcelExport]="true" [allowPdfExport]="true" [contextMenuItems]="contextMenuItems" [allowSelection]=(this.viewchecks()) [selectionSettings]="selectOptions">
+        <ejs-grid #normalgrid title="Clientes/Proveedores" [locale]='"es-ES"' [dataSource]='data' allowPaging='true' [allowSorting]='true' [allowFiltering]='true' [filterSettings]='filterSettings' [pageSettings]='pageSettings' [editSettings]='editSettings' [toolbar]='toolbar'
+        allowPdfExport='true' allowExcelExport="true" [allowExcelExport]="true" [allowPdfExport]="true" [contextMenuItems]="contextMenuItems" [allowSelection]=(this.viewchecks()) [selectionSettings]="selectOptions"
+        (toolbarClick)="toolbarClick($event)" (contextMenuClick)="onContextMenuClick($event)" (actionComplete)="eventoOcurrido($event,'')" (rowSelected)="select($event)" (rowDeselected)="select($event)" >
             <e-columns>
               @if(this.viewchecks()){
                 <e-column type='checkbox' width='50'></e-column>
               }
-              <e-column field='id' headerText='Id' width='0' textAlign='Right' visible="false"></e-column>  
+              <e-column field='id' headerText='Id' width='0' textAlign='Right' visible="false"></e-column>
               <e-column field='nombres' headerText='Nombres' width='160' textAlign='Left' [validationRules]='customeridrules'></e-column>
                 <e-column field='direccion' headerText='Direccion' width='160' ></e-column>
                 <e-column field='telefono' headerText='Telefono' width='60' format='C2' textAlign='Right' editType='stringedit' ></e-column>
                 <e-column field='email' headerText='Email' width='120' isPrimaryKey='true' editType='stringedit' textAlign='Center' [validationRules]='customeridrules'></e-column>
-                <e-column field='identintificador_fiscal' headerText='Cedula/RUC' width='80' editType='stringedit' textAlign='Right'></e-column>
+                <e-column field='identificador_fiscal' headerText='Cedula/RUC' width='80' editType='stringedit' textAlign='Right'></e-column>
                 <e-column field='tipo' headerText='Tipo' width='70' editType='dropdownedit' [edit]='editparams' textAlign='Right'></e-column>
                 <e-column field='estado' headerText='Estado' width='0' editType='dropdownedit' [edit]='editparams'></e-column>
-                <e-column field='fecha_registro' headerText='Fecha Registro' width='90' editType='datetimepickeredit' [format]='formatoptions' textAlign='Right' ></e-column>                
+                <e-column field='fecha_registro' headerText='Fecha Registro' width='90' editType='datetimepickeredit' [format]='formatoptions' textAlign='Right' ></e-column>
             </e-columns>
         </ejs-grid>
     </div>
-
-
-    <!-- <div class="col-lg-3 property-section">
-        <div class="property-panel-section">
-            <div class="property-panel-header">Properties</div>
-            <div class="property-panel-content">
-                <table id="property" title="Properties" class="property-panel-table" style="width: 100%">
-                    <tr>
-                        <td style="width: 40%">
-                            <div style="padding-top: 7px">Add New Row Position</div>
-                        </td>
-                        <td style="width: 60%;padding-right: 10px">
-                            <div id='typeddl'>
-                                <ejs-dropdownlist id='newRowPosition' #ddsample [dataSource]='newRowPosition' index=0
-                                    [fields]='localFields' (change)="onChange($event)">
-                                </ejs-dropdownlist>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-        </div>
-    </div> -->
-
 </div>
 <style>
         #typeddl {
@@ -50,80 +27,3 @@
         }
 </style>
 
-<!--<div class="overflow-x-auto">
-  <table class="table">
-    <thead>
-      <tr>
-        <th>
-          <label>
-            <input type="checkbox" class="checkbox" />
-          </label>
-        </th>
-        <th>Título</th>
-        <th>Precio</th>
-        <th>Inventario</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody>
-
-      @for (product of products(); track product.id) {
-
-      <tr>
-        <th>
-          <label>
-            <input type="checkbox" class="checkbox" />
-          </label>
-        </th>
-        <td>
-          <div class="flex items-center gap-3">
-            <div class="avatar">
-              <div class="mask mask-squircle h-12 w-12">
-                <img
-                  [src]="product.images | productImage"
-                  [alt]="product.title"
-                />
-              </div>
-            </div>
-            <div>
-              <a
-                [routerLink]="['/admin/products', product.id]"
-                class="font-bold hover:text-accent transition-colors duration-300"
-                >{{ product.title }}</a
-              >
-
-              <div class="text-sm opacity-50">
-                {{ product.sizes.join(", ") }}
-              </div>
-            </div>
-          </div>
-        </td>
-        <td>
-          {{ product.price | currency }}
-        </td>
-        <td>
-          @if( product.stock <= 10 ) {
-          <span class="badge badge-error">{{ product.stock }}</span>
-          }
-
-          @else if ( product.stock <=20 ) {
-          <span class="badge badge-warning">{{ product.stock }}</span>
-          }
-
-          @else {
-          <span class="badge badge-success">{{ product.stock }}</span>
-          }
-        </td>
-        <th>
-          <a
-            [routerLink]="['/admin/products', product.id]"
-            class="btn btn-ghost text-accent btn-xs"
-          >
-            Detalles
-          </a>
-        </th>
-      </tr>
-      }
-    </tbody>
-  </table>
-</div>-->
