@@ -1,0 +1,33 @@
+
+<div class="control-section" style="margin-top: 0px; height:20vh;">
+    <div class="col-lg-9">
+        <ejs-grid #normalgrid id='Normalgrid' title="DetalleVenta" [locale]='"es-ES"' [dataSource]='data' allowPaging='true' [allowSorting]='true' [allowFiltering]='true' [filterSettings]='filterSettings' [pageSettings]='pageSettings' [editSettings]='editSettings' [toolbar]='toolbar' (actionBegin)='actionBegin($event)'
+        allowPdfExport='true' allowExcelExport="true" [allowExcelExport]="true" [allowPdfExport]="true" [contextMenuItems]="contextMenuItems" [allowSelection]=(this.viewchecks()) [selectionSettings]="selectOptions">
+            <e-columns>
+              @if(this.viewchecks()){
+                <e-column type='checkbox' width='50'></e-column>
+              }
+              <e-column field='id' headerText='Id' width='0' textAlign='Right' visible="false"></e-column>  
+              <e-column field='nombres' headerText='Nombres' width='160' textAlign='Left' [validationRules]='customeridrules'></e-column>
+                <e-column field='direccion' headerText='Direccion' width='160' ></e-column>
+                <e-column field='telefono' headerText='Telefono' width='60' format='C2' textAlign='Right' editType='stringedit' ></e-column>
+                <e-column field='email' headerText='Email' width='120' isPrimaryKey='true' editType='stringedit' textAlign='Center' [validationRules]='customeridrules'></e-column>
+                <e-column field='identintificador_fiscal' headerText='Cedula/RUC' width='80' editType='stringedit' textAlign='Right'></e-column>
+                <e-column field='tipo' headerText='Tipo' width='70' editType='dropdownedit' [edit]='editparams' textAlign='Right'></e-column>
+                <e-column field='estado' headerText='Estado' width='0' editType='dropdownedit' [edit]='editparams'></e-column>
+                <e-column field='fecha_registro' headerText='Fecha Registro' width='90' editType='datetimepickeredit' [format]='formatoptions' textAlign='Right'></e-column>                
+            </e-columns>
+        </ejs-grid>
+    </div>
+
+
+    
+
+</div>
+<style>
+        #typeddl {
+            min-width: 100px;
+        }
+</style>
+
+

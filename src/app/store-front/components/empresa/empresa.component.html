@@ -1,0 +1,46 @@
+  <style>
+         #palette-space {
+            border-style: solid;
+            border-color: #f2f2f2;
+           /* background: #f2f2f2*/
+        }
+        #diagram-space {
+            border-color: #f2f2f2;
+            border-style: solid;
+        }
+  </style>
+<div class="">
+<div style="width: 100%;height: 50px;margin-bottom: 5px;">
+    <div class="button-group" style="width:70%;float:left;">
+        <button ejs-button  [isPrimary]="true" id="addButton"  (click)="addButton()"  [disabled]="addButtonDisabled" style="margin-right: 10px;">Add Node</button>
+        <button ejs-button [isPrimary]="true" id="deleteButton"  (click)="deleteButton()"  [disabled]="deleteButtonDisabled">Delete Node</button>
+    </div>
+  </div>
+  <div style="width: 100%;">
+    <div id="palette-space" style="width:27%;float:left;height: 400px;overflow: scroll;">
+        <ejs-treeview #treeview id="default" [fields]='field' width="90%" [allowEditing]='allowEditing' [allowDragAndDrop]='allowDragAndDrops' (keyPress) = "keyPress($event)" (nodeEdited) = "nodeEdited($event)" (nodeSelected) = "nodeSelected($event)" (nodeClicked) = "nodeClicked($event)"></ejs-treeview>
+    </div>
+    <div id="diagram-space" style="width:72%;float:right">
+      <div class="content-wrapper" style="width:100%;float:right">
+        <ejs-diagram
+          #diagram
+          id="diagram"
+          width="100%"
+          height="400px"
+          [getConnectorDefaults]="connectorDefaults"
+          [getNodeDefaults]="nodeDefaults"
+          [layout]="layout"
+          [dataSourceSettings]="dataSourceSettings"
+          [snapSettings]="snapSettings"
+          [tool]="tools"
+          (selectionChange)="selectionChange($event)"
+          (click)="click($event)"
+          (textEdit)="textEdit($event)"
+          (drop)="drop($event)"
+          (dragEnter)="dragEnter($event)"
+        >
+        </ejs-diagram>
+      </div>
+    </div>
+  </div>
+  </div>

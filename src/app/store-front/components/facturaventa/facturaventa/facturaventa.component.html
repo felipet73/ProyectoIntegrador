@@ -1,0 +1,295 @@
+
+<div id="target" class=" code-editor" style="height: 95vh;">
+    <ejs-splitter #splitterInstance id="outerSplitter" orientation='Vertical' height='95%'
+        width='100%'>
+        <e-panes>
+            <e-pane size='42%' min='30%'>
+                <ng-template #content>
+                    <ng-container *ngTemplateOutlet="template1"></ng-container>
+                </ng-template>
+            </e-pane>
+            <e-pane>
+                <ng-template #content>
+                    <div class="content" style="padding:12px;">                        
+                      <detalleventa-table></detalleventa-table>
+                    </div>
+                </ng-template>
+            </e-pane>
+        </e-panes>
+    </ejs-splitter>
+</div>
+
+<ng-template #template1>
+    <div class="content" style="height:100%;">
+        <ejs-splitter #innersplitter id="innerSplitter" height="100%" width="100%">
+            <e-panes>
+                <e-pane size='50%' min='23%'>
+                    <ng-template #content>
+                        <div class=" e-tab-section">
+    <div class="e-sample-resize-container" style="width: 100%;">
+        <!-- Render the Tab Component -->
+        <ejs-tab id="tab_default" heightAdjustMode='Auto'>
+                <e-tabitems>
+                    <e-tabitem [header]='headerText[0]'>
+                        <ng-template #content>
+                                        
+
+<div class="col-lg-12 ">
+  <div class="content-wrapper" style="max-width: 100%; margin: 0 auto; padding:10px;">       
+    <form
+      id="formId"
+      [formGroup]="empresaForm"
+      #formDir="ngForm"
+      class="form-horizontal"
+      novalidate=""
+    >
+          <button
+              id="validateSubmit"
+              class="samplebtn e-control e-btn e-primary"
+              type="submit"
+              style="position:absolute; margin-top:-60px;right:50px;"
+              data-ripple="true"
+            >
+              Actualizar Datos
+            </button>
+          
+      <div class="form-group">
+        <div class="e-float-input">
+          <input id="nombre" type="text" formControlName="nombre" />
+          <span class="e-float-line"></span>
+          <label for="nombre" class="e-float-text">Nombre Empresa</label>
+        </div>
+        
+      </div>
+
+      <div class="form-group">
+        <div class="e-float-input">
+          <input id="correo" type="text" formControlName="correo" />
+          <span class="e-float-line"></span>
+          <label for="correo" class="e-float-text">Email</label>
+        </div>
+       
+      </div>
+
+      <div class="form-group">
+        <div class="e-float-input">
+          <input id="id_fiscal" type="text" formControlName="id_fiscal" />
+          <span class="e-float-line"></span>
+          <label for="id_fiscal" class="e-float-text">RUC</label>
+        </div>        
+      </div>
+      <div class="form-group">
+        <div class="e-float-input">
+          <textarea
+            rows="2"
+            id="direccion_fiscal"
+            name="direccion_fiscal"
+            formControlName="direccion_fiscal"
+          ></textarea>
+          <span class="e-float-line"></span>
+          <label class="e-float-text" for="direccion_fiscal">Direccion</label>
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-bottom: 8px;">
+        <div class="e-float-input">
+          <input id="pais" formControlName="pais" />
+          <span class="e-float-line"></span>
+          <label for="pais" class="e-float-text">Ciudad</label>
+        </div>       
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+
+                   </ng-template>
+                    </e-tabitem>
+                    <e-tabitem [header]='headerText[1]'>
+                        <ng-template #content>
+                            
+<div class="col-lg-6 ">
+  <div class="content-wrapper" style="max-width: 100%; margin: 0 auto; padding:10px;">       
+    <form
+      id="formId"
+      [formGroup]="empresaExtForm"
+      #formDir="ngForm"
+      class="form-horizontal"
+      novalidate=""
+    >
+          <button
+              id="validateSubmit"
+              class="samplebtn e-control e-btn e-primary"
+              type="submit"
+              style="position:absolute; margin-top:-60px;right:50px;"
+              data-ripple="true"
+            >
+              Actualizar Datos
+            </button>
+
+      <div class="form-group">
+        <div class="e-float-input">
+          <textarea
+            rows="2"
+            id="iso"
+            name="iso"
+            formControlName="iso"
+          ></textarea>
+          <span class="e-float-line"></span>
+          <label class="e-float-text" for="iso">Detalles </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="e-float-input">
+          <input id="simbolo_moneda" type="text" formControlName="simbolo_moneda" />
+          <span class="e-float-line"></span>
+          <label for="simbolo_moneda" class="e-float-text">Moneda</label>
+        </div>
+        <div class="e-float-input">
+          <input id="nombre_moneda" type="text" formControlName="nombre_moneda" />
+          <span class="e-float-line"></span>
+          <!-- <label for="nombre_moneda" class="e-float-text"></label> -->
+        </div> 
+      </div>
+
+      
+      <div class="form-group">
+        <div class="e-float-input">
+            <input id="impuesto" formControlName="impuesto" />
+            <span class="e-float-line"></span>
+            <span class="e-float-line"></span>
+          <label class="e-float-text" for="impuesto">Impuesto</label>
+        </div>       
+        <div class="e-float-input">
+            <input id="valor_impuesto" formControlName="valor_impuesto" />
+            <span class="e-float-line"></span>
+        </div>       
+
+      </div>
+
+    </form>
+  </div>
+</div>
+
+
+                        </ng-template>
+                    </e-tabitem>
+                    
+                </e-tabitems>
+            </ejs-tab>
+    </div>
+</div>
+                    </ng-template>
+                </e-pane>      
+                
+                
+                <e-pane size='50%' min='35%'>
+                    <ng-template #content>
+                       
+
+
+
+
+
+
+                    </ng-template>
+                </e-pane>
+            </e-panes>
+        </ejs-splitter>
+    </div>
+</ng-template>
+
+<style>
+    .form-title {
+        width: 100%;
+        text-align: center;
+        padding: 10px;
+        font-size: 16px;
+        font-weight: 500;
+        color: white;
+    }
+
+    .highcontrast .form-title,
+    .material-dark .form-title,
+    .material3-dark .form-title,
+    .fabric-dark .form-title,
+    .bootstrap-dark .form-title,
+    .bootstrap5-dark .form-title,
+    .tailwind-dark .form-title,
+    .tailwind3-dark .form-title,
+    .fluent-dark .form-title,
+    .fluent2-dark .form-title,
+    .fluent2-highcontrast .form-title  {
+        color: #fff;
+    }
+
+    .e-error,
+    .e-float-text {
+        font-weight: 500;
+    }
+
+    .e-custom-label {
+        font-size: 14px;
+        font-weight: 500;
+        margin-left: 20px;
+    }
+
+    form {
+        padding-top: 10px;
+        padding-bottom: 10px;
+        /*margin-bottom: 45px;*/
+        /*border: 1px solid #ccc;*/
+        box-shadow: 0 1px 3px 0 rgba(200, 255, 255, 0.56);
+        border-radius: 5px;
+        background: transparent;
+    }
+
+    .highcontrast form,
+    .highcontrast .header {
+        color: #fff;
+        background: #000000;
+    }
+
+    .header {
+        color: rgba(0, 0, 0, 0.7);
+    }
+
+    table,
+    td,
+    th {
+        padding: 5px;
+    }
+
+    .form-horizontal .form-group {
+        margin-left: 20px;
+        margin-right: 20px;
+    }
+
+    .row {
+        padding-bottom: 30px;
+        padding-top: 25px;
+    }
+
+    .highcontrast .form-horizontal,
+    .material-dark .form-horizontal,
+    .material3-dark .form-horizontal,
+    .fabric-dark .form-horizontal,
+    .bootstrap-dark .form-horizontal,
+    .bootstrap5-dark .form-horizontal {
+        background: #393939;
+    }
+    .tailwind-dark .form-horizontal,
+    .tailwind3-dark .form-horizontal { 
+        background: #6c757d;
+    }
+
+    .fluent-dark .form-horizontal,
+    .fluent2-dark .form-horizontal,
+    .fluent2-highcontrast .form-horizontal { 
+        background: #212529;
+    }
+
+</style>

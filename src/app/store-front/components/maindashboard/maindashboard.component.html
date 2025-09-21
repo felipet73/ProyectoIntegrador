@@ -1,0 +1,211 @@
+<style>
+/*.control-section{
+    margin-top: 0px;
+    height: 100%;
+    width: 100vw;
+}*/
+.e-dashboardlayout.e-control .e-panel .e-panel-container {
+    height: 100%;
+    width: 100%;
+    overflow-y:auto !important;
+}
+#listbox-control {
+    width: 100%;
+    margin: auto;
+}
+</style>
+<div class="control-section" style="height: 88vh; width: 100%; margin-top: 0px;">
+  <div class="col-lg-12 col-sm-12 col-md-12" id="sidebar-section">
+    <!-- main content declaration -->
+    <div id="target">
+      <div class="sidebar-content">
+        <div class="dashboardParent">
+          <ejs-dashboardlayout id='editLayout' [columns]="6" #editLayout [cellSpacing]='cellSpacing'
+            [cellAspectRatio]='aspectRatio'>
+            <e-panels>
+
+              <!-- panel de empresa -->
+              <e-panel [sizeX]="2" [sizeY]="1" [row]="0" [col]="0" [zIndex]="999">
+                <ng-template #content>
+
+                  <div class="min-h-screen flex items-center justify-center bg-[#0a1a2f] p-6" style="padding: 12px; height:100%; overflow-y:auto;">
+
+                  <div class="bg-[#0e2a4d] text-white rounded-2xl p-6 w-full max-w-md shadow-2xl border-4 border-white"style="box-shadow: 0px 0px 15px rgba(255,255,255,0.6), inset 0px 0px 10px rgba(255,255,255,0.3); height:100%; display:flex;justify-content: space-around;align-items: center;">
+
+                    <!-- Avatar -->
+                    <div class="row flex flex-col items-center" style="margin-top:10px; margin-left:10px;">
+                      <img src="https://i.pravatar.cc/100" alt="avatar"
+                          class="w-24 h-24 rounded-full border-4 border-white shadow-lg"/>
+                      <h2 class="mt-4 text-2xl font-bold drop-shadow-[2px_2px_3px_rgba(255,255,255,0.4)]">
+                        Bienvenido, Felipe
+                      </h2>
+                    </div>
+
+                    <!-- Datos usuario -->
+                    <div class="row mt-6 space-y-2 text-center text-sm opacity-90">
+                      <p><span class="font-semibold">Dirección:</span> Av. Siempre Viva 123</p>
+                      <p><span class="font-semibold">Teléfono:</span> +593 999 999 999</p>
+                      <p><span class="font-semibold">Usuario desde:</span> Enero 2023</p>
+                      <div class="col mt-6 flex justify-center">
+                        <a routerLink="/auth/login" class="e-tbar-btn e-tbtn-txt e-control e-btn e-lib">Modifica tus Datos de Perfil </a>
+                      </div>
+
+                    </div>
+
+                    <!-- Botón -->
+                  </div>
+                </div>
+                  <!-- <div class="card">
+                    <span class="e-icons session"></span>
+                    <p>Mi contnido *********************************</p>
+                    <p>Mi contnido *********************************</p>
+                    <p>Mi contnido *********************************</p>
+                    <div class="card-content text">
+                      Session
+                    </div>
+                    <div class="card-content number">
+                      124,444
+                    </div>
+                  </div> -->
+                </ng-template>
+              </e-panel>
+
+
+
+              <e-panel [sizeX]="2" [sizeY]="1" [row]="0" [col]="2" [zIndex]="999" >
+                <ng-template #content >
+
+                  <!-- <div class="col-lg-12 control-section"> -->
+                    <div id="listbox-control" style="width: 100%;">
+                        <ejs-listbox [dataSource]='dataEmpresas'>
+                            <ng-template #itemTemplate let-data>
+                                <div class = "list-wrapper">
+                                    <span class="e-avatar e-avatar-xlarge e-avatar-circle"><img src="https://ej2.syncfusion.com/angular/demos/assets/template/pic/{{data.pic}}.svg" alt="pic" /></span>
+                                    <span class="text"> {{data.text}} </span>
+                                    <span class="description"> {{data.description}} </span>
+                                </div>
+                            </ng-template>
+                        </ejs-listbox>
+                    </div>
+                <!-- </div> -->
+
+                  <!-- <div class="card">
+                    <span class="e-icons profile"></span>
+                    <div class="card-content text">
+                      Users
+                    </div>
+                    <div class="card-content number">
+                      64,496
+                    </div>
+                  </div> -->
+                </ng-template>
+              </e-panel>
+
+
+              <e-panel [sizeX]="2" [sizeY]="1" [row]="0" [col]="4" [zIndex]="999">
+                <ng-template #content>
+                  <div class="card">
+                    <span class="e-icons views"></span>
+                    <div class="card-content text">
+                      Views
+                    </div>
+                    <div class="card-content number">
+                      442,278
+                    </div>
+                  </div>
+                </ng-template>
+              </e-panel>
+
+
+              <e-panel [sizeX]="2" [sizeY]="2" [row]="1" [col]="0" [zIndex]="999">
+                <ng-template #header>
+                  <div>Active Visitors</div>
+                </ng-template>
+                <ng-template #content>
+                  <ejs-accumulationchart id="pie" (load)='piechartLoad($event)' #pie width="100%" height="100%" [legendSettings]="legendSettings"
+                    [tooltip]="tooltip" (animationComplete)='animationComplete($event)'
+                    (textRender)="textRender($event)" [enableSmartLabels]="enablesmartlabel" selectionMode="Point">
+                    <e-accumulation-series-collection>
+                      <e-accumulation-series name='Revenue' [dataSource]='expenseData' xName='Device' yName='Amount'
+                        [startAngle]="startAngle" [endAngle]="endAngle" innerRadius="35%" radius="100%"
+                        [dataLabel]="dataLabel" [palettes]="palettes">
+                      </e-accumulation-series>
+                    </e-accumulation-series-collection>
+                  </ejs-accumulationchart>
+                </ng-template>
+              </e-panel>
+
+
+              <e-panel [sizeX]="2" [sizeY]="2" [row]="1" [col]="2" [zIndex]="999">
+                <ng-template #header>
+                  <div>Regional Map</div>
+                </ng-template>
+                <ng-template #content>
+                  <!-- <ejs-maps id='map' (load)=mapLoad($event) style="display:block;" width="100%" height="100%" [zoomSettings]='zoomSettings'
+                    [layers]='layers' [legendSettings]="maplegendSettings">
+                  </ejs-maps> -->
+                </ng-template>
+              </e-panel>
+
+
+              <e-panel [sizeX]="2" [sizeY]="2" [row]="1" [col]="4" [zIndex]="999">
+                <ng-template #header>
+                  <div>Visitors by Type</div>
+                </ng-template>
+                <ng-template #content>
+                  <ejs-chart style='display:block;' id='colChart' #colchart [chartArea]='chartArea' width='100%'
+                    height='100%' [legendSettings]="collegendSettings" [margin]='margin' [primaryXAxis]='primaryXAxis'
+                    [primaryYAxis]='primaryYAxis' (load)='load($event)'>
+                    <e-series-collection>
+                      <e-series [dataSource]='data' type='Column' xName='x' yName='y' name='Desktop' width=2
+                        [marker]='marker'> </e-series>
+                      <e-series [dataSource]='data1' type='Column' xName='x' yName='y' name='Silver' width=2
+                        [marker]='marker' fill='#e36593'> </e-series>
+                      <e-series [dataSource]='data2' type='Column' xName='x' yName='y' name='Bronze' width=2
+                        [marker]='marker'> </e-series>
+                    </e-series-collection>
+                  </ejs-chart>
+                </ng-template>
+              </e-panel>
+              <e-panel [sizeX]="4" [sizeY]="2" [row]="3" [col]="2" [zIndex]="999">
+                <ng-template #header>
+                  <div>Traffic History</div>
+                </ng-template>
+                <ng-template #content>
+                  <ejs-chart style="height:100%; width:100%" #lineChart id="visitorsChart" style='display:block;'
+                    [chartArea]='chartArea' [width]='widthValue' [height]='heightValue'
+                    [primaryXAxis]='lineprimaryXAxis' [primaryYAxis]='lineprimaryYAxis'
+                    [legendSettings]='linelegendSettings' (load)='load($event)'>
+                    <e-series-collection>
+                      <e-series [dataSource]='columnData' type='SplineArea' xName='x' yName='y' name='Jan'
+                        [border]='lineborder' fill='rgb(239, 183, 202)' opacity=0.5> </e-series>
+                      <e-series [dataSource]='columnData1' type='SplineArea' xName='x' yName='y' name='Feb'
+                        [border]='lineborder' fill='rgb(14, 64, 152, .6)' opacity=0.5> </e-series>
+                    </e-series-collection>
+                  </ejs-chart>
+                </ng-template>
+              </e-panel>
+              <e-panel [sizeX]="2" [sizeY]="2" [row]="3" [col]="0" [zIndex]="999">
+                <ng-template #header>
+                  <div>Usage Statistics</div>
+                </ng-template>
+                <ng-template #content>
+                  <ejs-accumulationchart id="pieChart" (load)='piechartLoad($event)' #piechart width="100%" height="100%"
+                    [legendSettings]="maplegendSettings" [enableSmartLabels]="enablesmartlabel" [center]="center">
+                    <e-accumulation-series-collection>
+                      <e-accumulation-series name='Usage' [dataSource]='piedataSource' xName='x' yName='y'
+                        [startAngle]="startAngle" [endAngle]="endAngle" innerRadius="0%" radius="100%"
+                        [dataLabel]="piedataLabel" [explode]='explode' explodeOffset='10%' [explodeIndex]='2'>
+                      </e-accumulation-series>
+                    </e-accumulation-series-collection>
+                  </ejs-accumulationchart>
+                </ng-template>
+              </e-panel>
+            </e-panels>
+          </ejs-dashboardlayout>
+        </div>
+      </div>
+    </div>
+    <!--end of main content declaration -->
+  </div>
+</div>

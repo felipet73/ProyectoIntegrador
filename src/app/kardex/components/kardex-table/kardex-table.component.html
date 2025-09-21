@@ -1,0 +1,39 @@
+<style>
+
+</style>
+
+<div class="control-section" style="margin-top: 0px;">
+    <div class="content-wrapper">
+        <ejs-grid [dataSource]='data' #grid id="GridChart" height="90vh" [allowSorting]='true' [allowFiltering]='true' [filterSettings]='filterSettings'
+            allowMultiSorting="true" allowSelection="true" [selectionSettings]='selectionSettings' [contextMenuItems]='contextMenuItems'
+            (contextMenuClick)='contextMenuClick($event)' (queryCellInfo)='queryCellInfo($event)' (created)='created()' [gridLines]="lines">
+            <e-columns>
+                <e-column type='checkbox' width='50' freeze="Left" textAlign='Center' [customAttributes]="{ class: 'grid-chart-checkbox-css' }"></e-column>
+                <e-column field='Product' headerText='Product' width='200' freeze="Left">
+                    <ng-template #template let-data>
+                        <div class="e-product-info">
+                            <img src="https://ej2.syncfusion.com/angular/demos/assets/grid/images/product/{{data.Image}}.png" [alt]="data.Product" />
+                            <span>{{ data.Product }}</span>
+                        </div>
+                    </ng-template>
+                </e-column>
+                <e-column field='Category' headerText='Categories' width='160'>
+                    <ng-template #template let-data>
+                        <div class="e-category-info">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path [attr.d]="data.CategoryIcon" fill="black"/>
+                            </svg>
+                            <span>{{ data.Category }}</span>
+                        </div>
+                    </ng-template>
+                </e-column>
+                <e-column field='Year' headerText='Year' textAlign='Right' width='140'></e-column>
+                <e-column field='Online' headerText='Online' format='C2' textAlign='Right' width='160'></e-column>
+                <e-column field='Retail' headerText='Retail' format='C2' textAlign='Right' width='160'></e-column>
+                <e-column field='ProfitLoss' headerText='Profit/Loss' format='C2' textAlign='Right' width='200'></e-column>
+                <e-column field='UnitsSold' headerText='Units Sold' textAlign='Right' width='160'></e-column>
+                <e-column field='Revenue' headerText='Revenue' format='C2' textAlign='Right' width='160' freeze="Right"></e-column>
+            </e-columns>
+        </ejs-grid>
+    </div>
+</div>

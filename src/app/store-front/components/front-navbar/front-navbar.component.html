@@ -1,0 +1,279 @@
+
+<style>
+.control-section{
+    margin-top: 100px;
+}
+
+</style>
+<div class="control-section" id="wrapper">
+    <!-- main content declaration -->
+    <div>
+        <ejs-toolbar cssClass="dockToolbar" id="dockToolbar" (clicked)="toolbarCliked($event)">
+            <e-items>
+                @if ( authService.authStatus() === 'authenticated' ) {
+                  <e-item prefixIcon="e-tbar-menu-icon tb-icons" tooltipText="Menu"></e-item>
+                }
+                <e-item>
+                    <ng-template #template>
+                        <div class="e-folder">
+                            <div class="e-folder-name" style="color:aliceblue;">Inventarios (UniAndes)</div>
+                        </div>
+                    </ng-template>
+                </e-item>
+
+                <!-- <e-item type='Separator'></e-item>
+                <e-item prefixIcon='e-icons e-mouse-pointer' tooltipText='Text selection tool' text='Selection' showTextOn='Overflow' align="Left" tabIndex='0'></e-item>
+                <e-item prefixIcon='e-icons e-pan' tooltipText='Pan mode' text='Pan mode' showTextOn='Overflow' align="Left"></e-item>
+                <e-item type='Separator'></e-item>
+                <e-item prefixIcon='e-icons e-undo' tooltipText='Undo' text='Undo' showTextOn='Overflow' align="Left"></e-item>
+                <e-item prefixIcon='e-icons e-redo' tooltipText='Redo' text='Redo' showTextOn='Overflow' align="Left"></e-item>
+                <e-item type='Separator'></e-item>
+                <e-item prefixIcon='e-pv-comment-icon' tooltipText='Add Comments' text='Add Comments' showTextOn='Overflow' align="Left" tabIndex='0'></e-item>
+                <e-item type='Separator'></e-item> -->
+
+                <!-- <e-item prefixIcon='e-icons e-annotation-edit' tooltipText='Edit Annotations' text='Edit' showTextOn='Overflow' align="Right"></e-item>
+                <e-item prefixIcon='e-icons e-print' tooltipText='Print File' text='Print' showTextOn='Overflow' align="Right"></e-item> -->
+
+                <e-item type='Separator'></e-item>
+                @if ( authService.authStatus() !== 'authenticated' ) {
+                  <e-item align="Right">
+                    <ng-template #template>
+                      <div>
+                        <a routerLink="/auth/login" class="e-tbar-btn e-tbtn-txt e-control e-btn e-lib">Iniciar Sesión</a>
+                      </div>
+                    </ng-template>
+                  </e-item>
+                }@else{
+
+                <e-item type='Separator'></e-item>
+                <e-item prefixIcon='e-icons e-menu' tooltipText='Print File' text='Empresa:' showTextOn='Overflow' align="Right"></e-item>
+                <e-item cssClass="percentage" align="Right" overflow="Show">
+                    <ng-template #template>
+                        <div style="width: 220px"><ejs-combobox id='comboelement' #samples [dataSource]='Empresa' popupWidth="250px" value="Market El Surtido" [showClearButton]='false'></ejs-combobox></div>
+                    </ng-template>
+                </e-item>
+                <e-item type='Separator'></e-item>
+                //icono de cargo
+                <e-item prefixIcon='e-icons e-folder' tooltipText='Print File' text='Cargo:' showTextOn='Overflow' align="Right"></e-item>
+                <e-item cssClass="percentage" align="Right" overflow="Show">
+                    <ng-template #template>
+                        <div style="width: 150px"><ejs-combobox id='comboelement' #samples [dataSource]='Cargo' popupWidth="200px" value="Caja" [showClearButton]='false'></ejs-combobox></div>
+                    </ng-template>
+                </e-item>
+
+              <e-item type='Separator'></e-item>
+                <e-item text='Vender' align="Left" tabIndex='0'></e-item>
+                <e-item type='Separator'></e-item>
+                <e-item cssClass="find" align="Right" overflow="Show">
+                    <ng-template #template>
+                        <div class="e-input-group e-float-icon-left">
+                            <span class="e-icons e-search e-input-group-icon"></span>
+                            <div class="e-input-in-wrap">
+                                <input class="e-input" name="input" type="text" placeholder="Que quieres saber?" />
+                            </div>
+                        </div>
+                    </ng-template>
+                </e-item>
+
+
+                  <e-item type='Separator'></e-item>
+                  <e-item prefixIcon='e-icons e-user' tooltipText='Usuario' text={{authService.user()?.email}} showTextOn='Overflow' align="Right"></e-item>
+                  <e-item type='Separator'></e-item>
+                  <e-item align="Right" (click)="authService.logout()" tooltipText='Download' text='Cerrar Sesión' showTextOn='Overflow'>
+                  </e-item>
+                }
+
+            </e-items>
+
+
+        </ejs-toolbar>
+    </div>
+    <div id="main-content container-fluid col-md-12" class="dockmaincontent">
+      @if ( authService.authStatus() !== 'authenticated' ) {
+
+        <app-information></app-information>
+      }@else{
+      <!-- main content declaration -->
+      <div class="main-menu-content" id="maintext">
+        <div class="menu-content">
+            <!-- <div class="sidebar-heading"> Responsive Sidebar with Menu</div> -->
+            @if (this.selectedItem() == 'Productos')
+            {
+              <product-table-component></product-table-component>
+            }@else if (this.selectedItem() == 'Clientes/Proveedores' || this.selectedItem() == 'Datos'){
+              <div><clientesprov-table></clientesprov-table></div>
+            }@else if (this.selectedItem() == 'Reporte Ventas'){
+              <div><hojaexcel-container></hojaexcel-container></div>
+            }@else if (this.selectedItem() == 'Ventas' || this.selectedItem() == 'Factura/Egreso'){
+              <div><factura-venta-component></factura-venta-component></div>
+            }@else if (this.selectedItem() == 'Datos Empresa - Sucursales - Cajas - Empleados' || this.selectedItem() == 'Empresa'){
+              <div><total-empresa-component></total-empresa-component></div>
+            }@else if (this.selectedItem() == 'Kardex'){
+              <div><kardex-table-component></kardex-table-component></div>
+            }@else {
+              <main-dashboard-root></main-dashboard-root>
+            }
+
+        </div>
+      </div>
+      <!-- end of main content declaration sidebar element declaration -->
+      <ejs-sidebar id="menuSidebar" class="sidebar-menu" #sidebarMenuInstance [enableDock]='enableDock'
+          [dockSize]="dockSize" [width]="width" [target]="target" [isOpen]="true" type="Auto">
+
+        <div class="table-content" style="margin-top: 10px;">
+            <div class="col-lg-12 control-section">
+            <div class="sample_container" style="margin-top: -70px;">
+                <!-- Card Component -->
+                <div class="e-card e-custom-card">
+                    <div class="e-card-header">
+                        <!-- xLarge Circle Avatar-->
+                        <div class="e-avatar e-avatar-circle e-avatar-xlarge">
+                            <img src="https://ej2.syncfusion.com/angular/demos/assets/avatar/images/pic02.png" alt="profile_pic">
+                        </div>
+                        &nbsp;
+                    </div>
+                    <div class="e-card-header">
+                        <div class="e-card-header-caption center">
+                            <div class="e-card-header-title name">{{ authService.user()?.fullName }}</div>
+                            <div class="e-card-sub-title">{{ authService.user()?.fullName }}</div>
+                        </div>
+                    </div>
+                    <div class="e-card-content">
+                        <p class="avatar-content"> {{ authService.user()?.fullName }} </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+                  <!-- <ejs-textbox placeholder="" floatLabelType="Auto"> id="resSearch" placeholder="Search..."></ejs-textbox> -->
+                  <!-- <p class="main-menu-header">TABLE OF CONTENTS</p> -->
+          </div>
+
+          <div class="main-menu">
+              <div>
+                  <ejs-menu id="dockMenu" [items]="menuItems" orientation='Vertical' cssClass='dock-menu' (select)='onSelect($event)'></ejs-menu>
+              </div>
+          </div>
+      </ejs-sidebar>
+
+      }
+    </div>
+
+</div>
+
+
+
+<!-- <div class="navbar bg-base-100">
+  <div class="navbar-start">
+    <div class="dropdown">
+      <div tabindex="0" role="button" class="btn btn-ghost lg:hidden">
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-5 w-5"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h8m-8 6h16"
+          />
+        </svg>
+      </div>
+      <ul
+        tabindex="0"
+        class="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
+      >
+        <li>
+          <a
+            routerLink="/gender/men"
+            class="btn btn-ghost"
+            routerLinkActive="text-secondary"
+          >
+            Hombres
+          </a>
+        </li>
+        <li>
+          <a
+            routerLink="/gender/women"
+            class="btn btn-ghost"
+            routerLinkActive="text-secondary"
+          >
+            Mujeres
+          </a>
+        </li>
+        <li>
+          <a
+            routerLink="/gender/kid"
+            class="btn btn-ghost"
+            routerLinkActive="text-secondary"
+          >
+            Kids
+          </a>
+        </li>
+      </ul>
+    </div>
+    <a routerLink="/" class="btn btn-ghost text-xl font-montserrat">
+      Teslo
+      <span class="text-secondary">| Shop</span>
+    </a>
+  </div>
+  <div class="navbar-center hidden lg:flex">
+    <ul class="menu menu-horizontal px-1">
+      <li>
+        <a
+          routerLink="/gender/men"
+          class="btn btn-ghost"
+          routerLinkActive="text-secondary"
+        >
+          Hombres
+        </a>
+      </li>
+      <li>
+        <a
+          routerLink="/gender/women"
+          class="btn btn-ghost"
+          routerLinkActive="text-secondary"
+        >
+          Mujeres
+        </a>
+      </li>
+      <li>
+        <a
+          routerLink="/gender/kid"
+          class="btn btn-ghost"
+          routerLinkActive="text-secondary"
+        >
+          Kids
+        </a>
+      </li>
+    </ul>
+  </div>
+  <div class="navbar-end gap-4">
+    @if (authService.isAdmin()) {
+    <a routerLink="/admin" class="btn text-accent">Admin Panel</a>
+    }
+
+
+    @if ( authService.authStatus() === 'authenticated' ) {
+    <button class="btn btn-ghost">
+      {{ authService.user()?.fullName }}
+    </button>
+    <button class="btn btn-sm btn-error" (click)="authService.logout()">
+      Salir
+    </button>
+    }
+
+    @else if ( authService.authStatus() === 'not-authenticated' ) {
+    <a routerLink="/auth/login" class="btn btn-secondary">Login</a>
+    }
+
+    @else {
+    <a class="btn btn-ghost">...</a>
+    }
+  </div>
+</div> -->
+

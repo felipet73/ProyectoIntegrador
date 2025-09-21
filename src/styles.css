@@ -1,0 +1,46 @@
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  @font-face {
+    font-family: "Montserrat";
+    src: url("/assets/fonts/montserrat-alternates/montserrat-alternates-medium.ttf")
+      format("truetype");
+  }
+} */
+
+@import '../node_modules/@syncfusion/ej2-base/styles/tailwind-dark.css';
+@import '../node_modules/@syncfusion/ej2-buttons/styles/tailwind-dark.css';
+
+body {
+    margin: 0px;
+}
+
+.swal2-popup {
+    background: black !important;
+    color: white !important;
+}
+
+ /* Estilo general para el scrollbar */
+    ::-webkit-scrollbar {
+      width: 8px; /* Ancho de la barra de desplazamiento vertical */
+      height: 8px; /* Altura de la barra de desplazamiento horizontal */
+    }
+
+    /* Estilo para la pista del scrollbar */
+    ::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1); /* Fondo de la pista (oscuro) */
+      border-radius: 10px;
+    }
+
+    /* Estilo para el pulgar del scrollbar (el control arrastrable) */
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.4); /* Color del pulgar (oscuro y semitransparente) */
+      border-radius: 10px;
+    }
+
+    /* Estilo al pasar el cursor sobre el pulgar */
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(255, 255, 255, 0.6); /* Pulgar más visible al pasar el ratón */
+    }
