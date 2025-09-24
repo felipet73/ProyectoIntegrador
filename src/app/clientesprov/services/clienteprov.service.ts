@@ -30,6 +30,17 @@ export class ClienteProvService {
     return data as ClienteProv;
   }
 
+  async getClientePorCedula(cedula: string): Promise<ClienteProv | null> {
+    const { data, error } = await this.supabaseService.client.from('clientes_proveedores').select('*').eq('identificador_fiscal', cedula).single();
+    if (error) throw error;
+    return data as ClienteProv;
+  }
+  async getClientePorCorreo(correo: string): Promise<ClienteProv | null> {
+    const { data, error } = await this.supabaseService.client.from('clientes_proveedores').select('*').eq('email', correo).single();
+    if (error) throw error;
+    return data as ClienteProv;
+  }
+
   // Insertar nuevo cliente
   async nuevoCliente(cliente: ClienteProv): Promise<ClienteProv> {
 

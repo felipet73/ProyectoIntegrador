@@ -30,6 +30,13 @@ export class ProductsService {
     return data as Product;
   }
 
+  async getProductoPorCodigoBarras(id: string): Promise<Product | null> {
+    const { data, error } = await this.supabaseService.client.from('productos').select('*').eq('codigo_barras', id).single();
+    if (error) throw error;
+    return data as Product;
+  }
+
+
   // Insertar nuevo producto
   async nuevoProucto(producto: Product): Promise<Product> {
 

@@ -8,7 +8,8 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { SupabaseService } from 'src/app/supabase/supabase.service';
 
 import Swal from 'sweetalert2';
-import { Empresa, EmpresasResponse } from '@store-front/components/interfaces/empresa.interface';
+import { Asignacion_Sucursal, Caja, Empresa, EmpresasResponse, Sucursal } from '@store-front/components/interfaces/empresa.interface';
+import { User } from '@auth/interfaces/user.interface';
 
 //type HasEmpresas = '' | 'authenticated' | 'not-authenticated';
 const baseUrl = environment.baseUrl;
@@ -47,6 +48,43 @@ export class EmpresasService {
             }
         });
         return of(null);
+  }
+
+  async getAllSucursalesEmpresa(id_Empresa: number): Promise<Sucursal[] | null> {
+    const { data, error } = await this.supabaseService.client.from('sucursales').select("*").eq('id_empresa',id_Empresa);
+    if (error) throw error;
+    return data;
+  }
+
+  async getAllCajasSucursal(id_Sucursal: number): Promise<Caja[] | null> {
+    const { data, error } = await this.supabaseService.client.from('caja').select("*").eq('id_sucursal',id_Sucursal);
+    if (error) throw error;
+    return data;
+  }
+
+  async getAllUsuariosAsignados(id_Sucursal: number): Promise<Asignacion_Sucursal[] | null> {
+    const { data, error } = await this.supabaseService.client.from('asignacion_sucursal').select("*").eq('id_sucursal',id_Sucursal);
+    if (error) throw error;
+    return data;
+  }
+
+  async getAllAsignacionesUsuario(id_Usuario: number): Promise<Asignacion_Sucursal[] | null> {
+    const { data, error } = await this.supabaseService.client.from('asignacion_sucursal').select("*").eq('id_usuario',id_Usuario);
+    if (error) throw error;
+    return data;
+  }
+
+  async getEmpresXSucursal(id_Sucursal: number): Promise<Asignacion_Sucursal[] | null> {
+    var dataR:any = await this.supabaseService.client.from('sucursales').select("*").eq('id',id_Sucursal);
+    if (dataR.error) throw dataR.error;
+    var data2 =null;
+    if (dataR)
+    {
+      console.log(dataR.data, 'sucursal')
+      data2 = await this.supabaseService.client.from('empresa').select("*").eq('id', dataR.data[0].id_empresa  );
+      if (data2.error) throw data2.error;
+    }
+    return data2?.data[0] || null;
   }
 
 

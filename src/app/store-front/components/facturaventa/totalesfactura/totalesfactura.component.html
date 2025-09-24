@@ -1,0 +1,58 @@
+<div class="max-w-lg w-full bg-[#0B1120] text-white rounded-3xl shadow-2xl p-6 border border-blue-900
+            transform transition duration-500 hover:scale-105 hover:shadow-4xl relative" style="margin-left:50px">
+
+  <!-- Cabecera: Logo y Nombre del local -->
+  <div class="flex items-center justify-between mb-6">
+    <div class="flex items-center space-x-4">
+      <!-- Logo -->
+      <img src="{{ this.actualEmpresa!.logo !== '' ? this.actualEmpresa!.logo : 'https://png.pngtree.com/png-vector/20250122/ourlarge/pngtree-supermarket-logo-shopping-vector-png-image_15303067.png' }}" alt="Logo" class="w-14 h-14 rounded-full border-2 border-white shadow-md">
+      <div>
+        <h1 class="text-2xl font-bold tracking-wide">{{ this.actualEmpresa?.nombre || 'MiEmpresa' }}</h1>
+        <p class="text-sm opacity-80">Sucursal Central</p>
+      </div>
+    </div>
+    <div class="bg-white text-[#0B1120] font-semibold px-5 py-1 rounded-full shadow-lg">
+      Factura
+    </div>
+  </div>
+
+  <!-- Body: Totales -->
+  <div class="space-y-2 text-white">
+    <div class="flex justify-between">
+      <span class="opacity-80">Usuario que vende</span>
+      <span class="font-semibold">{{ authService.user()?.email }}</span>
+    </div>
+    <div class="flex justify-between">
+      <span class="opacity-80">Cliente</span>
+      <span class="font-semibold">{{ this.clienteFactura?.nombres}}</span>
+    </div>
+    <div class="flex justify-between">
+      <span class="opacity-80">Cantidad de artículos</span>
+      <span class="font-semibold">{{ this.cantidad }}</span>
+    </div>
+    <div class="flex justify-between">
+      <span class="opacity-80">Subtotal</span>
+      <span class="font-semibold">${{ this.subTotal.toFixed(2) }}</span>
+    </div>
+    <div class="flex justify-between">
+      <span class="opacity-80">Impuesto (12%)</span>
+      <span class="font-semibold">${{ this.impuesto.toFixed(2) }}</span>
+    </div>
+    <div class="flex justify-between">
+      <span class="opacity-80">Descuento</span>
+      <span class="font-semibold">-$ {{ this.desc.toFixed(2) }}</span>
+    </div>
+  </div>
+
+  <!-- Divider -->
+  <hr class="my-2 border-white/20">
+
+  <!-- Total -->
+  <div class="flex justify-between items-center">
+    <span class="text-2xl font-bold tracking-wide">Total</span>
+    <span class="text-4xl font-extrabold">$ {{ this.total.toFixed(2) }}</span>
+  </div>
+
+  <!-- Brillo sutil animado -->
+  <div class="absolute top-0 left-0 w-full h-full rounded-3xl bg-blue opacity-3 pointer-events-none animate-pulse"></div>
+</div>

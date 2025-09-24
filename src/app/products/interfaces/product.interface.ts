@@ -12,7 +12,7 @@ export interface Product {
   precio_venta: number,
   precio_compra: number,
   id_categoria: number,
-  categoria: string,
+  categoria: Categoria,
   codigo_barras: string,
   codigo_interno: string,
   id_empresa: number,
@@ -22,19 +22,13 @@ export interface Product {
   foto: string,
 }
 
-export enum Gender {
-  Kid = 'kid',
-  Men = 'men',
-  Unisex = 'unisex',
-  Women = 'women',
+
+export interface Categoria {
+  id: number,
+  nombre: string,
+  color: string,
+  icono: string,
+  id_empresa: number
 }
 
-export enum Size {
-  L = 'L',
-  M = 'M',
-  S = 'S',
-  XS = 'XS',
-  Xl = 'XL',
-  Xs = 'XS',
-  Xxl = 'XXL',
-}
+

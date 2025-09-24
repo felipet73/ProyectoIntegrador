@@ -4,6 +4,7 @@ import { SortService, GridModule, FilterService, IFilter, Column, GridComponent,
 import { MultiSelect } from '@syncfusion/ej2-dropdowns';
 import { createElement } from '@syncfusion/ej2-base';
 
+//import { DropDownList } from '@syncfusion/ej2-angular-dropdowns';
 
 import { EditService, ToolbarService, PageService, NewRowPosition, PdfExportService } from '@syncfusion/ej2-angular-grids';
 import { ChangeEventArgs, DropDownListComponent, DropDownListModule } from '@syncfusion/ej2-angular-dropdowns';
@@ -13,22 +14,26 @@ import { ContextMenuItem, GroupSettingsModel, EditSettingsModel,  SelectionServi
 import { ChipListModule, ClickEventArgs } from '@syncfusion/ej2-angular-buttons';
 import { NgIf } from '@angular/common';
 import { copy } from '@syncfusion/ej2-angular-spreadsheet';
-import { Product } from '@products/interfaces/product.interface';
+import { Categoria, Product } from '@products/interfaces/product.interface';
 import Swal from 'sweetalert2';
 import { ProductsService } from '@products/services/products.service';
 import { Empresa } from '@store-front/components/interfaces/empresa.interface';
+import { CategoriasService } from '@products/services/categoria.service';
+import { map } from 'rxjs';
 
 
 @Component({
     selector: 'product-table-component',
     templateUrl:'product-table.component.html',
     styleUrls: ['product-table.component.css'],
-    providers: [SortService, FilterService, ToolbarService, EditService, PageService, SortService, FilterService, ResizeService, ExcelExportService, PdfExportService, ContextMenuService,  SelectionService],
+    providers: [SortService, FilterService, DropDownListComponent,DropDownListModule, ToolbarService, EditService, PageService, SortService, FilterService, ResizeService, ExcelExportService, PdfExportService, ContextMenuService,  SelectionService],
     encapsulation: ViewEncapsulation.None,
     standalone: true,
     imports: [ GridModule,  ChipListModule, ]
 })
 export class ProducTableComponent {
+    @ViewChild('ddsample')
+    public dropDown!: DropDownListComponent;
     @ViewChild('grid')
     public grid?: GridComponent;
     public data!: Object[];
@@ -36,14 +41,12 @@ export class ProducTableComponent {
     public filter?: IFilter;
     public dropInstance?: MultiSelect;
 
-
-    public dropDown!: DropDownListComponent;
     public editSettings!: Object;
     public toolbar: string[] = [];
     public orderidrules!: Object;
     public customeridrules!: Object;
     public freightrules!: Object;
-    public editparams!: Object;
+    public editParams!: Object;
     public pageSettings!: Object;
     public formatoptions!: Object;
     public contextMenuItems!: ContextMenuItemModel[]|ContextMenuItem[];
@@ -57,20 +60,37 @@ export class ProducTableComponent {
     public miEmpresa:Empresa|null  = JSON.parse(localStorage.getItem('MiEmpresa') || "") || null;
     public actualEmpresa:Empresa|null  = JSON.parse(localStorage.getItem('ActualEmpresa') || "") || null;
 
-    constructor(private productoService: ProductsService) {}
+    constructor(private productoService: ProductsService,
+      private categoriaService: CategoriasService
+    ) {}
+    //public categoria:number=0;
 
-    ngOnInit(): void {
+    public categorias: any[] = [];
+
+    public estadoValueAccessor = (field: number, data: any, column: any) => {
+      const estado = this.categorias.find(e => e.id_categoria === data[field]);
+      return estado ? estado.text : '';
+    };
 
 
-
-        this.cargarProductos();
-
-        this.editSettings = {  allowEditing: true, allowAdding: true, allowDeleting: true , newRowPosition: 'Top', /*showAddNewRow: true ,*/  mode: 'Dialog'};
+    async ngOnInit()  {
+        await this.cargarCategorias();
+/*this.categorias = [
+            { id_categoria: 1, nombre: "hola" },
+            { id_categoria: 2, nombre: 'Granos' },
+            { id_categoria: 3, nombre: "Frutas" }
+          ];*/
+        this.editSettings = {  allowEditing: true, allowAdding: true, allowDeleting: true , newRowPosition: 'Top', /*showAddNewRow: true , */ mode: 'Dialog'};
         this.toolbar = ['[--Productos--]','Add', 'Edit', 'Delete', 'Update', 'Cancel', 'Search', 'PdfExport', 'ExcelExport', 'CsvExport', '+ Categoria'];
         this.orderidrules = { required: true, number: true };
         this.customeridrules = { required: true, minLength: 5 };
         this.freightrules = { required: true, min: 0 };
-        this.editparams = { params: { popupHeight: '300px' } };
+        /*this.editParams = { params: {
+                            dataSource: this.categorias,
+                            fields: { value: 'id_categoria', text: 'nombre' },
+                            placeholder: 'Seleccione Categoria' }
+                          };*/
+
         this.pageSettings = { pageCount: 5, pageSize: 9 };
         //this.filterSettings = { type: 'Excel'};
         this.formatoptions = { type: 'dateTime', format: 'M/d/y hh:mm a' }
@@ -140,17 +160,41 @@ export class ProducTableComponent {
                 },
             },
         }
+        this.cargarProductos();
+    }
+
+
+    async cargarCategorias() {
+
+      var categoriasResp:any = await this.categoriaService.getAllCategorias();
+        console.log('categorias recibidas', categoriasResp);
+        if (categoriasResp){
+          this.categorias = categoriasResp.map((x:Categoria) => {
+            return { id_categoria: x.id, text: x.nombre }
+          })
+          console.log('Asi queda categorias', this.categorias);
+          this.editParams = { params: {
+                            dataSource: this.categorias,
+                            fields: { value: 'id_categoria', text: 'text' },
+                            placeholder: 'Seleccione Categoria' }
+                          };
+        }else{
+          this.categorias = [];
+        }
+
     }
 
     async cargarProductos() {
-        var productosResp:any = await this.productoService.getAllProductos();
+
+      var productosResp:any = await this.productoService.getAllProductos();
         console.log('productos recibidos', productosResp);
         if (productosResp){
           this.data = productosResp;
         }else{
           this.data = [];
         }
-      }
+
+    }
 
       async agregar(producto: Product) {
         if (!producto.id_empresa || producto.id_empresa === 0)
@@ -187,7 +231,7 @@ export class ProducTableComponent {
             this.idsToDelete = this.seleccionActual ? [...this.seleccionActual.map(x => x.id || 0)] : [];
           }
       if (args.item.text === "+ Categoria") {
-          alert('Nueva Categoria')
+          //alert('Nueva Categoria')
       }
 
    }

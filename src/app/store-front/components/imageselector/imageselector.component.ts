@@ -6,6 +6,7 @@
  import { createElement } from '@syncfusion/ej2-base';
  import { DialogComponent, ButtonPropsModel, PositionDataModel, DialogModule } from '@syncfusion/ej2-angular-popups';
  import { AnimationSettingsModel } from '@syncfusion/ej2-splitbuttons';
+import { Empresa } from '../interfaces/empresa.interface';
 
 
  @Component({
@@ -39,7 +40,9 @@
             this.ImageEditorInstance.theme = window.location.href.split('#')[1].split('/')[1];
         }
     }
-
+    public miEmpresa:Empresa|null  = JSON.parse(localStorage.getItem('MiEmpresa') || "") || null;
+    public actualEmpresa:Empresa|null  = JSON.parse(localStorage.getItem('ActualEmpresa') || "") || null;
+    
     public imageLoaded = (): void => {
         if (this.imgSrc === '') {
             let canvas: any = document.querySelector('#img-canvas');

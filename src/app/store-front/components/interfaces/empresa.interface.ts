@@ -26,19 +26,55 @@ export interface Empresa {
   correo: string;
   pie_pagina_ticket:string;
   user: User;
+  id_caja:number;
 }
 
 export interface Sucursal {
-
+  id:number;
+  nombre:string;
+  direccion_fiscal:string;
+  id_empresa:number;
+  delete:boolean;
 }
 
-export interface Caja {
+export interface Almacen {
+  id:number;
+  id_sucursal:number;
+  fecha_creacion:Date;
+  delete:boolean;
+  nombre:string;
+  default:boolean;
+}
 
+
+export interface Caja {
+  id:number;
+  descripcion:string;
+  id_sucursal:number;
+  fecha_creacion:Date;
+  delete:boolean;
+  print:boolean;
 }
 
 export interface Asignacion_Sucursal {
-
+  id:number;
+  id_sucursal:number;
+  id_usuario:number;
+  id_caja:number;
 }
+
+export interface CierreCaja {
+  id:number;
+  fechainicio:Date;
+  fechacierre:Date;
+  id_usuario:number;
+  total_efectivo_calculado:number;
+  total_efectivo_real:number;
+  estado:number;
+  diferencia_efectivo:number;
+  id_caja:number;
+}
+
 
 
 

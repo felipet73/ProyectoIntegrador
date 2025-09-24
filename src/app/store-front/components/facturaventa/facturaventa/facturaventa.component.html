@@ -1,16 +1,22 @@
 
+<div id="defaultSample" class="">
+    <div class="menu-control">
+        <ejs-menu [items]='menuItems' (select)="SelecionaOpcionMenu($event)"></ejs-menu>
+    </div>
+</div>
+
 <div id="target" class=" code-editor" style="height: 95vh;">
     <ejs-splitter #splitterInstance id="outerSplitter" orientation='Vertical' height='95%'
         width='100%'>
         <e-panes>
-            <e-pane size='42%' min='30%'>
+            <e-pane size='42%' min='10%'>
                 <ng-template #content>
                     <ng-container *ngTemplateOutlet="template1"></ng-container>
                 </ng-template>
             </e-pane>
             <e-pane>
                 <ng-template #content>
-                    <div class="content" style="padding:12px;">                        
+                    <div class="content" style="padding:12px;">
                       <detalleventa-table></detalleventa-table>
                     </div>
                 </ng-template>
@@ -23,152 +29,96 @@
     <div class="content" style="height:100%;">
         <ejs-splitter #innersplitter id="innerSplitter" height="100%" width="100%">
             <e-panes>
-                <e-pane size='50%' min='23%'>
+                <e-pane size='60%' min='23%'>
                     <ng-template #content>
                         <div class=" e-tab-section">
     <div class="e-sample-resize-container" style="width: 100%;">
         <!-- Render the Tab Component -->
         <ejs-tab id="tab_default" heightAdjustMode='Auto'>
                 <e-tabitems>
-                    <e-tabitem [header]='headerText[0]'>
-                        <ng-template #content>
-                                        
 
-<div class="col-lg-12 ">
-  <div class="content-wrapper" style="max-width: 100%; margin: 0 auto; padding:10px;">       
-    <form
-      id="formId"
-      [formGroup]="empresaForm"
-      #formDir="ngForm"
-      class="form-horizontal"
-      novalidate=""
-    >
-          <button
-              id="validateSubmit"
-              class="samplebtn e-control e-btn e-primary"
-              type="submit"
-              style="position:absolute; margin-top:-60px;right:50px;"
-              data-ripple="true"
-            >
-              Actualizar Datos
-            </button>
-          
-      <div class="form-group">
-        <div class="e-float-input">
-          <input id="nombre" type="text" formControlName="nombre" />
-          <span class="e-float-line"></span>
-          <label for="nombre" class="e-float-text">Nombre Empresa</label>
-        </div>
-        
-      </div>
-
-      <div class="form-group">
-        <div class="e-float-input">
-          <input id="correo" type="text" formControlName="correo" />
-          <span class="e-float-line"></span>
-          <label for="correo" class="e-float-text">Email</label>
-        </div>
-       
-      </div>
-
-      <div class="form-group">
-        <div class="e-float-input">
-          <input id="id_fiscal" type="text" formControlName="id_fiscal" />
-          <span class="e-float-line"></span>
-          <label for="id_fiscal" class="e-float-text">RUC</label>
-        </div>        
-      </div>
-      <div class="form-group">
-        <div class="e-float-input">
-          <textarea
-            rows="2"
-            id="direccion_fiscal"
-            name="direccion_fiscal"
-            formControlName="direccion_fiscal"
-          ></textarea>
-          <span class="e-float-line"></span>
-          <label class="e-float-text" for="direccion_fiscal">Direccion</label>
-        </div>
-      </div>
-
-      <div class="form-group" style="margin-bottom: 8px;">
-        <div class="e-float-input">
-          <input id="pais" formControlName="pais" />
-          <span class="e-float-line"></span>
-          <label for="pais" class="e-float-text">Ciudad</label>
-        </div>       
-      </div>
-    </form>
-  </div>
-</div>
-
-
-
-
-                   </ng-template>
-                    </e-tabitem>
                     <e-tabitem [header]='headerText[1]'>
                         <ng-template #content>
-                            
+
 <div class="col-lg-6 ">
-  <div class="content-wrapper" style="max-width: 100%; margin: 0 auto; padding:10px;">       
+  <div class="content-wrapper" style="max-width: 100%; margin: 0 auto; padding:10px;">
     <form
       id="formId"
-      [formGroup]="empresaExtForm"
+      [formGroup]="clienteForm"
       #formDir="ngForm"
       class="form-horizontal"
       novalidate=""
     >
+          <!-- <button
+              id="validateSubmit"
+              class="samplebtn e-control e-btn e-primary"
+              type="submit"
+              style="position:absolute; margin-top:-60px;right:40px;"
+              data-ripple="true"
+            >
+              Guardar
+            </button>
+
           <button
               id="validateSubmit"
               class="samplebtn e-control e-btn e-primary"
               type="submit"
-              style="position:absolute; margin-top:-60px;right:50px;"
+              style="position:absolute; margin-top:-60px;right:130px;"
               data-ripple="true"
             >
-              Actualizar Datos
-            </button>
+              Buscar
+            </button> -->
+
+
+      <div class="form-group">
+        <div class="e-float-input" style="width:50%">
+          <input id="cedula" type="text" formControlName="cedula"  (keyup.enter)="accionEnterCedula()"/>
+          <span class="e-float-line"></span>
+          <label for="cedula" class="e-float-text">Cedula/RUC</label>
+        </div>
+        <div class="e-float-input" style="width:50%">
+          <input id="correo" type="text" formControlName="correo"  (keyup.enter)="accionEnterCorreo()"/>
+          <span class="e-float-line"></span>
+          <label for="correo" class="e-float-text"> Correo </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="e-float-input" style="width:100%">
+          <input id="nombres" type="text" formControlName="nombres" />
+          <span class="e-float-line"></span>
+          <label for="nombres" class="e-float-text">Nombres</label>
+        </div>
+
+      </div>
 
       <div class="form-group">
         <div class="e-float-input">
           <textarea
-            rows="2"
-            id="iso"
-            name="iso"
-            formControlName="iso"
+            rows="4"
+            id="direccion"
+            name="direccion"
+            formControlName="direccion"
           ></textarea>
           <span class="e-float-line"></span>
-          <label class="e-float-text" for="iso">Detalles </label>
+          <label class="e-float-text" for="direccion">Direccion </label>
         </div>
       </div>
 
       <div class="form-group">
-        <div class="e-float-input">
-          <input id="simbolo_moneda" type="text" formControlName="simbolo_moneda" />
+        <div class="e-float-input" style="width:50%">
+          <input id="ciudad" type="text" formControlName="ciudad" />
           <span class="e-float-line"></span>
-          <label for="simbolo_moneda" class="e-float-text">Moneda</label>
+          <label for="ciudad" class="e-float-text">Ciudad</label>
         </div>
-        <div class="e-float-input">
-          <input id="nombre_moneda" type="text" formControlName="nombre_moneda" />
+        <div class="e-float-input" style="width:50%">
+          <input id="telefono" type="text" formControlName="telefono" />
           <span class="e-float-line"></span>
-          <!-- <label for="nombre_moneda" class="e-float-text"></label> -->
-        </div> 
+          <label for="telefono" class="e-float-text">Telefono</label>
+        </div>
       </div>
 
-      
-      <div class="form-group">
-        <div class="e-float-input">
-            <input id="impuesto" formControlName="impuesto" />
-            <span class="e-float-line"></span>
-            <span class="e-float-line"></span>
-          <label class="e-float-text" for="impuesto">Impuesto</label>
-        </div>       
-        <div class="e-float-input">
-            <input id="valor_impuesto" formControlName="valor_impuesto" />
-            <span class="e-float-line"></span>
-        </div>       
 
-      </div>
 
     </form>
   </div>
@@ -177,20 +127,103 @@
 
                         </ng-template>
                     </e-tabitem>
-                    
+
+
+
+<e-tabitem [header]='headerText[2]'>
+                        <ng-template #content>
+
+<div class="col-lg-6 ">
+  <div class="content-wrapper" style="max-width: 100%; margin: 0 auto; padding:40px; padding-left:20%; padding-right:20%; ">
+    <form
+      id="formId"
+      [formGroup]="formapagoForm"
+      #formDir="ngForm"
+      class="form-horizontal"
+      novalidate=""
+    >
+          <!-- <button
+              id="validateSubmit"
+              class="samplebtn e-control e-btn e-primary"
+              type="submit"
+              style="position:absolute; margin-top:-90px;right:80px;"
+              data-ripple="true"
+            >
+              Actualizar Datos
+            </button> -->
+
+
+      <div class="col-lg-8  content-wrapper" style="height: 80px">
+        <div id='content' style="margin: 0 auto; width:250px; padding-top: 30px">
+            <ejs-combobox id='games' #sample [dataSource]='sportsData' (change)='onChange($event)' [fields]='fields' [(value)]='value' [placeholder]='waterMark' [popupHeight]='height'></ejs-combobox>
+        </div>
+    </div>
+
+     <div>
+        <div class="control-label">Enter the amount
+        </div>
+        <!-- Render Currency Textbox with custom format -->
+        <ejs-numerictextbox value="1025" format="$ ###.##" min="0"></ejs-numerictextbox>
+    </div>
+
+
+    <div>
+        <div class="control-label">Enter the amount
+        </div>
+        <!-- Render Currency Textbox with custom format -->
+        <ejs-numerictextbox value="1025" format="$ ###.##" min="0"></ejs-numerictextbox>
+    </div>
+
+     <div>
+        <div class="control-label">Enter the amount
+        </div>
+        <!-- Render Currency Textbox with custom format -->
+        <ejs-numerictextbox value="1025" format="$ ###.##" min="0"></ejs-numerictextbox>
+    </div>
+
+    </form>
+  </div>
+</div>
+
+
+                        </ng-template>
+                    </e-tabitem>
+
+
+
+              <e-tabitem [header]='headerText[3]'>
+                        <ng-template #content>
+
+
+
+
+
+
+                        </ng-template>
+                    </e-tabitem>
+
+
+
+
+
+
+
+
+
+
                 </e-tabitems>
             </ejs-tab>
     </div>
 </div>
                     </ng-template>
-                </e-pane>      
-                
-                
-                <e-pane size='50%' min='35%'>
+                </e-pane>
+
+
+                <e-pane size='40%' min='32%'>
                     <ng-template #content>
-                       
 
 
+                    <totales-factura-component></totales-factura-component>
 
 
 
@@ -282,13 +315,13 @@
         background: #393939;
     }
     .tailwind-dark .form-horizontal,
-    .tailwind3-dark .form-horizontal { 
+    .tailwind3-dark .form-horizontal {
         background: #6c757d;
     }
 
     .fluent-dark .form-horizontal,
     .fluent2-dark .form-horizontal,
-    .fluent2-highcontrast .form-horizontal { 
+    .fluent2-highcontrast .form-horizontal {
         background: #212529;
     }
 

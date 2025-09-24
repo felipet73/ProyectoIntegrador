@@ -49,7 +49,7 @@
                 <e-item prefixIcon='e-icons e-menu' tooltipText='Print File' text='Empresa:' showTextOn='Overflow' align="Right"></e-item>
                 <e-item cssClass="percentage" align="Right" overflow="Show">
                     <ng-template #template>
-                        <div style="width: 220px"><ejs-combobox id='comboelement' #samples [dataSource]='Empresa' popupWidth="250px" value="Market El Surtido" [showClearButton]='false'></ejs-combobox></div>
+                        <div style="width: 320px"><ejs-combobox id='comboelement' #samples [dataSource]='Empresa' popupWidth="350px" [value]="this.Empresa[0]" [showClearButton]='false' (select)="SeleccionEmpresa($event)"></ejs-combobox></div>
                     </ng-template>
                 </e-item>
                 <e-item type='Separator'></e-item>
@@ -57,7 +57,7 @@
                 <e-item prefixIcon='e-icons e-folder' tooltipText='Print File' text='Cargo:' showTextOn='Overflow' align="Right"></e-item>
                 <e-item cssClass="percentage" align="Right" overflow="Show">
                     <ng-template #template>
-                        <div style="width: 150px"><ejs-combobox id='comboelement' #samples [dataSource]='Cargo' popupWidth="200px" value="Caja" [showClearButton]='false'></ejs-combobox></div>
+                        <div style="width: 150px"><ejs-combobox id='comboelement' #samples1 [dataSource]='Cargo' popupWidth="200px" [value]="this.Cargo[0]" [showClearButton]='false'></ejs-combobox></div>
                     </ng-template>
                 </e-item>
 
