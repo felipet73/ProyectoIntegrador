@@ -107,13 +107,13 @@ export class FrontNavbarComponent {
                 { text: 'Kardex' },
             ]
         },
-        {
-            text: 'Usuario',
-            iconCss: 'icon-user icon',
-            items: [
-                { text: 'Datos de Usuario' }
-            ]
-        }
+        // {
+        //     text: 'Usuario',
+        //     iconCss: 'icon-user icon',
+        //     items: [
+        //         { text: 'Datos de Usuario' }
+        //     ]
+        // }
     ];
 
     public listFields: { [key: string]: Object } = { id: "id", text: "text", iconCss: "iconcss" };
@@ -172,6 +172,12 @@ export class FrontNavbarComponent {
 
     public SeleccionEmpresa(ev:any){
       console.log(ev, 'dato en change');
+      
+      this.shared.updatefacturaActiva(null);
+      this.shared.updateClienteFactura(null);
+      this.shared.updatefacturaActual(0);
+      this.shared.updatefacturaActualNo('');
+      
       if (ev.item.textContent == this.miEmpresa?.nombre){
         this.Cargo=['Admin'];
       this.menuItems= [
@@ -220,15 +226,16 @@ export class FrontNavbarComponent {
                       { text: 'Kardex' },
                   ]
               },
-              {
-                  text: 'Usuario',
-                  iconCss: 'icon-user icon',
-                  items: [
-                      { text: 'Datos de Usuario' }
-                  ]
-              }
+              // {
+              //     text: 'Usuario',
+              //     iconCss: 'icon-user icon',
+              //     items: [
+              //         { text: 'Datos de Usuario' }
+              //     ]
+              // }
           ];
         localStorage.setItem('ActualEmpresa',JSON.stringify(this.miEmpresa));
+
         //window.location.reload();
           this.selectedItem.set('Dashboard');
       }else{
@@ -240,6 +247,14 @@ export class FrontNavbarComponent {
                       items: [
                           { text: 'DashBoard' }
                       ]
+                  },
+                  {
+                  text: 'Datos',
+                  iconCss: 'icon-bell-alt icon',
+                  items: [
+                      { text: 'Clientes/Proveedores' },
+                      { text: 'Productos' }
+                  ]
                   },
                   {
                       text: 'Ventas',

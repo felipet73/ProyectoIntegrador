@@ -16,7 +16,7 @@ export class DetalleVentaService {
 
   // Obtener todos
   async getAllDetalleVentas(): Promise<DetalleVenta[]> {
-    const { data, error } = await this.supabaseService.client.from('detalle_venta').select('*').eq('id_empresa', this.acutualEmpresa?.id || "");
+    const { data, error } = await this.supabaseService.client.from('detalle_venta').select('*');
     if (error) throw error;
     return data as DetalleVenta[];
   }

@@ -70,24 +70,12 @@ export class TotalesFacturaComponent {
 
     ngOnInit(): void {
 
-    this.shared.cantProductos$.subscribe(valor => {
-      this.cantidad = valor;
-    });
-    this.shared.subTotal$.subscribe(valor => {
-      this.subTotal = valor;
-    });
-    this.shared.clienteFactura$.subscribe(valor2 => {
-      this.clienteFactura = valor2;
-    });
-  this.shared.descuento$.subscribe(valor2 => {
-      this.desc = valor2;
-    });
-  this.shared.impuesto$.subscribe(valor2 => {
-      this.impuesto = valor2;
-    });
-      this.shared.total$.subscribe(valor2 => {
-      this.total = valor2;
-    });
+    this.shared.cantProductos$.subscribe(valor => {this.cantidad = valor;});
+    this.shared.subTotal$.subscribe(valor => {this.subTotal = valor;});
+    this.shared.clienteFactura$.subscribe(valor2 => {this.clienteFactura = valor2;});
+    this.shared.descuento$.subscribe(valor2 => {this.desc = valor2;});
+    this.shared.impuesto$.subscribe(valor2 => {this.impuesto = valor2;});
+    this.shared.total$.subscribe(valor2 => {this.total = valor2;});
 
 
     /*console.log('before patch', this.miEmpresa)
@@ -123,6 +111,9 @@ export class TotalesFacturaComponent {
   get state() { return this.empresaForm.get('state'); }
   get Address() { return this.empresaForm.get('Address'); }
 
-
+  Mostrar(num: any) {
+    const n: number = Number(num);
+    return (Number.isInteger(n)) ? n.toFixed(2) : (Math.round(n * 100) / 100).toFixed(2);
+  }
 
 }

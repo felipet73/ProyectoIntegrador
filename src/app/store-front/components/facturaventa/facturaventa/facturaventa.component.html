@@ -142,44 +142,55 @@
       class="form-horizontal"
       novalidate=""
     >
-          <!-- <button
+          <button
               id="validateSubmit"
               class="samplebtn e-control e-btn e-primary"
               type="submit"
               style="position:absolute; margin-top:-90px;right:80px;"
               data-ripple="true"
             >
-              Actualizar Datos
-            </button> -->
+              Aceptar
+          </button> 
 
 
-      <div class="col-lg-8  content-wrapper" style="height: 80px">
+      <!-- <div class="col-lg-8  content-wrapper" style="height: 80px">
         <div id='content' style="margin: 0 auto; width:250px; padding-top: 30px">
             <ejs-combobox id='games' #sample [dataSource]='sportsData' (change)='onChange($event)' [fields]='fields' [(value)]='value' [placeholder]='waterMark' [popupHeight]='height'></ejs-combobox>
         </div>
-    </div>
+    </div> -->
 
      <div>
-        <div class="control-label">Enter the amount
+        <div class="control-label">Total a Pagar
         </div>
         <!-- Render Currency Textbox with custom format -->
-        <ejs-numerictextbox value="1025" format="$ ###.##" min="0"></ejs-numerictextbox>
+        <ejs-numerictextbox [value]="total" format="$ ###.##" min="0"></ejs-numerictextbox>
     </div>
 
 
     <div>
-        <div class="control-label">Enter the amount
-        </div>
-        <!-- Render Currency Textbox with custom format -->
-        <ejs-numerictextbox value="1025" format="$ ###.##" min="0"></ejs-numerictextbox>
+        <div class="control-label">Paga con
+        </div>       
+        <ejs-numerictextbox [value]="pagacon" format="$ ###.##" min="0" (change)="cambiaPago($event)" ></ejs-numerictextbox>
     </div>
 
      <div>
-        <div class="control-label">Enter the amount
-        </div>
-        <!-- Render Currency Textbox with custom format -->
-        <ejs-numerictextbox value="1025" format="$ ###.##" min="0"></ejs-numerictextbox>
+        <div class="control-label">Vuelto
+        </div>        
+        <ejs-numerictextbox [value]="vuelto" format="$ ###.##" min="0"></ejs-numerictextbox>
     </div>
+
+    <div>
+        <div class="control-label">Saldo
+        </div>        
+        <ejs-numerictextbox [value]="saldo" format="$ ###.##" min="0"></ejs-numerictextbox>
+    </div>
+
+    <div>
+        <div class="control-label">Referencia Tarjeta
+        </div>        
+        <ejs-textbox placeholder="" [value]="tarjeta" ></ejs-textbox>
+    </div>
+
 
     </form>
   </div>

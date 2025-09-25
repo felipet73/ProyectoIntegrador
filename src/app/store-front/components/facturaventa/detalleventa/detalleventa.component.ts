@@ -50,7 +50,7 @@ export class DetalleVentaComponent {
     public grid!: GridComponent;
     @ViewChild('ddsample')
     public dropDown!: DropDownListComponent;
-    public data!: Object[];
+    //public data!: Object[];
     public editSettings!: Object;
     public filterSettings!: Object;
     public toolbar: string[] = [];
@@ -64,6 +64,9 @@ export class DetalleVentaComponent {
     public selectOptions!: Object;
     public viewchecks = signal(true);
     facturaActiva:Venta|null =null;
+
+    dataDetalleFactura : DetalleVenta[]|null = null;
+
 
 
     public seleccionActual:DetalleVenta[] = [];
@@ -91,7 +94,7 @@ export class DetalleVentaComponent {
     },*/
   ]);
 
-  clienteProveedorDataSource: Object[] = JSON.parse(this.clienteProveedorData, (field: any, value: any) => {
+  clienteProveedorDataSource: DetalleVenta[] = JSON.parse(this.clienteProveedorData, (field: any, value: any) => {
     let dupValue: any = value;
     if (typeof value === 'string' && /^(\d{4}\-\d\d\-\d\d([tT][\d:\.]*){1})([zZ]|([+\-])(\d\d):?(\d\d))?$/.test(value)) {
         let arr: any = dupValue.split(/[^0-9]/);
@@ -163,12 +166,17 @@ export class DetalleVentaComponent {
   var Subtotal = 0;
   const allData = (this.grid.dataSource as any[]);
   console.log(allData, 'All data grid');
-  allData.forEach(el => Subtotal+=el.total);
-  this.shared.updatecantProductos(allData.length);
-  this.shared.updateSubTotal(Subtotal);
-  this.shared.updateDescuento(0.00);
-  this.shared.updateImpuesto(( Subtotal*0.12 ));
-  this.shared.updateTotal(Subtotal+Subtotal*0.12);
+
+  if (allData){
+    allData?.forEach(el => Subtotal+=el.total);
+    this.shared.updatecantProductos(allData?.length);
+    this.shared.updateSubTotal(Subtotal);
+    this.shared.updateDescuento(0.00);
+    this.shared.updateImpuesto(( Subtotal*0.12 ));
+    this.shared.updateTotal(Subtotal+Subtotal*0.12);
+  }
+
+
  }
 
 public edit = async (args: any) => {
@@ -196,7 +204,10 @@ public edit = async (args: any) => {
         if (cantidadInput.value != '' && precioInput.value != '')
           totalInput.value = (respProd?.precio_venta || 0 * Number(cantidadInput.value)).toFixed(2).toString();
       }
-      this.calcularFactura();
+      setTimeout(() => {
+          this.calcularFactura();  
+      }, 2600);
+      
   }
 
   if (args.key === 'Enter' && args.target.name ==='cantidad'){
@@ -212,7 +223,10 @@ public edit = async (args: any) => {
         if (cantidadInput.value != '' && precioInput.value != '')
           totalInput.value = (Number(precioInput.value) * Number(cantidadInput.value)).toFixed(2).toString();
       console.log('cantidad y precio', Number(precioInput.value) , Number(cantidadInput.value))
-      this.calcularFactura();
+      setTimeout(() => {
+        this.calcularFactura();  
+      }, 2600);
+      
   }
 
 
@@ -232,7 +246,6 @@ public edit = async (args: any) => {
 
 
     public onChange(e: ChangeEventArgs): void {
-
         let gridInstance: any = (<any>document.getElementById('grid')).ej2_instances[0];
         (gridInstance.editSettings as any).newRowPosition = <NewRowPosition>this.dropDown.value;
         gridInstance.refresh();
@@ -240,15 +253,13 @@ public edit = async (args: any) => {
 
 
     async cargarDetalle() {
-
       var detalleResp:any = await this.ventaDetalleService.getDetalleVentaPorId( this.facturaActiva?.id || 0);
         console.log('etalle venta recibidos', detalleResp);
         if (detalleResp){
-          this.data = detalleResp;
+          this.dataDetalleFactura = detalleResp;
         }else{
-          this.data = [];
+          this.dataDetalleFactura = null;
         }
-
     }
 
     async agregar(detalle: DetalleVenta) {
@@ -274,7 +285,7 @@ public edit = async (args: any) => {
     ngOnInit() {
 
         this.shared.facturaActiva$.subscribe(valor2 => {this.facturaActiva = valor2;});
-
+        this.shared.detalleActivo$.subscribe(valor2 => {this.dataDetalleFactura = valor2;});
        //Si tengo factura activa cargo el detalle
         //if (this.facturaActiva!=null){
           //alert(1)
@@ -284,19 +295,19 @@ public edit = async (args: any) => {
               var respdetalle:any = await this.ventaDetalleService.getDetalleVentaPorId(this.facturaActiva?.id || 0);
               console.log('Detalle de venta',respdetalle)
               if (respdetalle){
-                this.data = respdetalle;
+                this.dataDetalleFactura = respdetalle;
                 setTimeout(() => {
                   this.calcularFactura();
-                }, 1000);
+                }, 2000);
 
               }
             } catch (error) {
               console.log('No hay detalle de venta')
-              this.data = [];
+              this.dataDetalleFactura = null;
             }
           },2000)
         //}
-        this.data = this.clienteProveedorDataSource;
+        this.dataDetalleFactura = this.clienteProveedorDataSource;
         this.editSettings = { allowEditing: true, allowAdding: true, allowDeleting: true , newRowPosition: 'Top', showAddNewRow: true};
         this.toolbar = ['[--Detalle de Factura--]','Add', 'Edit', 'Delete', 'Update', 'Cancel', 'Search'];
         this.orderidrules = { required: true, number: true };

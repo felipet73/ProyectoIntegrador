@@ -18,6 +18,7 @@ export class ProductsService {
 
   // Obtener todos
   async getAllProductos(): Promise<Product[]> {
+    this.acutualEmpresa= JSON.parse(localStorage.getItem('ActualEmpresa') || "") || null;
     const { data, error } = await this.supabaseService.client.from('productos').select('*').eq('id_empresa', this.acutualEmpresa?.id || "");
     if (error) throw error;
     return data as Product[];
@@ -31,7 +32,8 @@ export class ProductsService {
   }
 
   async getProductoPorCodigoBarras(id: string): Promise<Product | null> {
-    const { data, error } = await this.supabaseService.client.from('productos').select('*').eq('codigo_barras', id).single();
+    this.acutualEmpresa = JSON.parse(localStorage.getItem('ActualEmpresa') || "") || null;
+    const { data, error } = await this.supabaseService.client.from('productos').select('*').eq('id_empresa', this.acutualEmpresa?.id).eq('codigo_barras', id).single();
     if (error) throw error;
     return data as Product;
   }
@@ -39,7 +41,8 @@ export class ProductsService {
 
   // Insertar nuevo producto
   async nuevoProucto(producto: Product): Promise<Product> {
-
+    this.acutualEmpresa = JSON.parse(localStorage.getItem('ActualEmpresa') || "") || null;
+    producto.id_empresa = this.acutualEmpresa?.id || 1;
     var { data, error } = await this.supabaseService.client.rpc('get_next_producto_id');
     if (error) throw error;
     console.log("Siguiente ID:", data);

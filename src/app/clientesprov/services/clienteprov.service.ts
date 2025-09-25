@@ -12,13 +12,14 @@ export class ClienteProvService {
   clienteprov  = computed(() => this._clienteprov());
   token = computed(this._token);
   public miEmpresa:Empresa|null  = JSON.parse(localStorage.getItem('MiEmpresa') || "") || null;
-
+  public actualEmpresa:Empresa|null  = JSON.parse(localStorage.getItem('ActualEmpresa') || "") || null;
   constructor() {}
 
 
   // Obtener todos
   async getAllClientes(): Promise<ClienteProv[]> {
-    const { data, error } = await this.supabaseService.client.from('clientes_proveedores').select('*').eq('id_empresa', this.miEmpresa?.id || "");
+    this.actualEmpresa = JSON.parse(localStorage.getItem('ActualEmpresa') || "") || null;
+    const { data, error } = await this.supabaseService.client.from('clientes_proveedores').select('*').eq('id_empresa', this.actualEmpresa?.id || "");
     if (error) throw error;
     return data as ClienteProv[];
   }

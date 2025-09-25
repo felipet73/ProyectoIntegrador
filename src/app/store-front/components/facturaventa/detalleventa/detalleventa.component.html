@@ -1,7 +1,7 @@
 
 <div class="control-section" style="margin-top: 0px; height:20vh;">
     <div class="col-lg-9">
-        <ejs-grid #grid title="DetalleVenta" [locale]='"es-ES"' [dataSource]='data' allowPaging='true' [allowSorting]='true' [allowFiltering]='true' [filterSettings]='filterSettings' [pageSettings]='pageSettings' [editSettings]='editSettings' [toolbar]='toolbar' (actionBegin)='actionBegin($event)'
+        <ejs-grid #grid title="DetalleVenta" [locale]='"es-ES"' [dataSource]='dataDetalleFactura' allowPaging='true' [allowSorting]='true' [allowFiltering]='true' [filterSettings]='filterSettings' [pageSettings]='pageSettings' [editSettings]='editSettings' [toolbar]='toolbar' (actionBegin)='actionBegin($event)'
         allowPdfExport='true' allowExcelExport="true" [allowExcelExport]="true" [allowPdfExport]="true" [contextMenuItems]="contextMenuItems" [allowSelection]=(this.viewchecks()) [selectionSettings]="selectOptions"  (keyPressed)="edit($event)"
         (toolbarClick)="toolbarClick($event)" (actionComplete)="eventoOcurrido($event,'')" (rowSelected)="select($event)" (rowDeselected)="select($event)"
         >

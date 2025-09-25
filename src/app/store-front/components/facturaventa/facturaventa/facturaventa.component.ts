@@ -7,7 +7,7 @@ import { SplitterModule } from '@syncfusion/ej2-angular-layouts';
 
 import { MenuItemModel, MenuModule, TabModule } from '@syncfusion/ej2-angular-navigations';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { FormValidators } from '@syncfusion/ej2-angular-inputs';
+import { FormValidators, TextBoxModule } from '@syncfusion/ej2-angular-inputs';
 import { DetalleVentaComponent } from '../detalleventa/detalleventa.component';
 import { TotalesFacturaComponent } from "../totalesfactura/totalesfactura.component";
 
@@ -15,7 +15,7 @@ import { TotalesFacturaComponent } from "../totalesfactura/totalesfactura.compon
 import { ViewChild, NgModule } from '@angular/core';
 import { ComboBoxComponent, ComboBoxModule } from '@syncfusion/ej2-angular-dropdowns';
 
-import { NumericTextBoxModule } from '@syncfusion/ej2-angular-inputs';
+import { NumericTextBoxModule, TextBoxModel } from '@syncfusion/ej2-angular-inputs';
 import { ClienteProvService } from 'src/app/clientesprov/services/clienteprov.service';
 import { ClienteProv } from 'src/app/clientesprov/interfaces/clienteprov.interface';
 import { SharedService } from '@store-front/services/shared.service';
@@ -34,7 +34,7 @@ import { EmpresasService } from '@store-front/services/empresas.service';
     styleUrls: ['facturaventa.component.css'],
     encapsulation: ViewEncapsulation.None,
     standalone: true,
-    imports: [SplitterModule, NgTemplateOutlet, TabModule, ReactiveFormsModule, DetalleVentaComponent, TotalesFacturaComponent, ComboBoxModule, NumericTextBoxModule, MenuModule]
+    imports: [SplitterModule, NgTemplateOutlet, TabModule, ReactiveFormsModule, DetalleVentaComponent, TotalesFacturaComponent, ComboBoxModule, NumericTextBoxModule, MenuModule, TextBoxModule]
 })
 
 export class FacturaVentaComponent {
@@ -57,6 +57,19 @@ export class FacturaVentaComponent {
   facturaActiva:Venta|null = null;
   empresasCaja:Empresa[]|null=null;
 
+
+  public subTotal:Number = 0;
+  public cantidad:Number = 0;
+  public desc:Number = 0;
+  public impuesto:Number = 0;
+  public total:Number = 0;
+
+  public pagacon:Number = 0;
+  public vuelto:Number = 0;
+  public saldo:Number = 0;
+  public tarjeta:string = '';
+
+
   constructor(private clienteServicio:ClienteProvService, private shared: SharedService, private ventaService:VentasService,
     private empresaServicio:EmpresasService
 
@@ -71,12 +84,10 @@ export class FacturaVentaComponent {
     });
 
     this.formapagoForm = new FormGroup({
-      'formapago': new FormControl(''),
       'totalpagar':new FormControl(''),
-      'recibido':new FormControl(''),
+      'pagacon':new FormControl(''),
       'cambio':new FormControl(''),
       'referenciatarjeta':new FormControl(''),
-      'abono':new FormControl(''),
       'saldo':new FormControl(''),
     });
 
@@ -89,12 +100,16 @@ export class FacturaVentaComponent {
       this.shared.facturaActual$.subscribe(valor => {this.ventaActual = valor;});
       this.shared.facturaActualNo$.subscribe(valor => {this.ventaActualNo = valor;});
       this.shared.clienteFactura$.subscribe(valor2 => {this.clienteFactura = valor2;});
-
       this.shared.cierreActual$.subscribe(valor2 => {this.cierreActual = valor2;});
-
       this.shared.empresasCaja$.subscribe(valor2 => {this.empresasCaja = valor2;});
-
       this.shared.facturaActiva$.subscribe(valor2 => {this.facturaActiva = valor2;});
+
+      this.shared.cantProductos$.subscribe(valor => {this.cantidad = valor;});
+      this.shared.subTotal$.subscribe(valor => {this.subTotal = valor;});
+      this.shared.descuento$.subscribe(valor2 => {this.desc = valor2;});
+      this.shared.impuesto$.subscribe(valor2 => {this.impuesto = valor2;});
+      this.shared.total$.subscribe(valor2 => {this.total = valor2;});
+
 
       try {
         var respVenta = await this.ventaService.getVentaActual();
@@ -104,8 +119,7 @@ export class FacturaVentaComponent {
           this.shared.updatefacturaActual(respVenta.id || 0);
           this.shared.updatefacturaActiva(respVenta);
           this.menuItems = [
-                  {text: 'Factura',iconCss: 'em-icons e-file',items: [{ text: 'Iniciar', iconCss: 'em-icons e-new' },{ separator: true },{ text: 'Finalizar ', iconCss: 'em-icons e-save' }]},
-                  {text: 'Ver',iconCss: 'em-icons e-edit',items: [{ text: 'Imprimir', iconCss: 'em-icons e-file' },{ text: 'Reportes', iconCss: 'em-icons e-file' },]},
+                  {  text: 'Iniciar', iconCss: 'em-icons e-new' },{ separator: true },{ text: 'Finalizar', iconCss: 'em-icons e-save' },          
                   {text: 'Factura No. 001-001-00000' + respVenta.nro_comprobante + '   Fecha:'+ new Date().toISOString(),iconCss: 'em-icons e-error'}
               ];
         }
@@ -129,16 +143,16 @@ export class FacturaVentaComponent {
       } catch (error) {
         this.clienteForm.patchValue({cedula: '',correo:'',nombres: '',direccion: '',ciudad: '',telefono: '',});
       }
-
+           
 
       } catch (error) {
         console.log('No hay venta activa');
         this.shared.updatefacturaActualNo('');
         this.shared.updatefacturaActual(0);
+        this.shared.updatefacturaActiva(null);
         this.menuItems = [
-          {text: 'Factura',iconCss: 'em-icons e-file',items: [{ text: 'Iniciar', iconCss: 'em-icons e-new' },{ separator: true },{ text: 'Finalizar ', iconCss: 'em-icons e-save' }]},
-          {text: 'Ver',iconCss: 'em-icons e-edit',items: [{ text: 'Imprimir', iconCss: 'em-icons e-file' },{ text: 'Reportes', iconCss: 'em-icons e-file' },]
-          },{text: 'No hay venta activa, Ingrese datos de cliente y seleccione Factura -> Iniciar',iconCss: 'em-icons e-error'}
+          {  text: 'Iniciar', iconCss: 'em-icons e-new' },{ separator: true },{ text: 'Finalizar', iconCss: 'em-icons e-save' },          
+          {text: 'No hay venta activa, Ingrese datos de cliente y seleccione Factura -> Iniciar',iconCss: 'em-icons e-error'}
         ];
       }
 
@@ -265,6 +279,7 @@ export class FacturaVentaComponent {
 
     async SelecionaOpcionMenu(ev:any){
       console.log('seleccionado', ev);
+      
       if (ev.item.text=="Iniciar" || ev.item.text == 'No hay venta activa, Ingrese datos de cliente y seleccione Factura -> Iniciar'){
 
         //verificar si tenemos cierre de caja abierto
@@ -296,28 +311,28 @@ export class FacturaVentaComponent {
 
 
 
-
+        //alert(this.clienteFactura?.id)
         if (this.clienteFactura && this.clienteFactura?.id != 0 && this.ventaActual == 0){
 
+          this.actualEmpresa  = JSON.parse(localStorage.getItem('ActualEmpresa') || "") || null;
           var nuevaVenta:Venta = {
             id: 0, fecha: new Date(), monto_total: 0, total_impuestos: 0,
             id_usuario: Number(this.authService.user()?.id) || 0,
             saldo: 0, pago_con: 1, referencia_tarjeta: '', vuelto: 0, cantidad_productos: 0,
-            sub_total: 0, id_cliente: this.clienteFactura?.id || 0, id_sucursal:1,
-            id_empresa:1, estado: 'Activa',
+            sub_total: 0, id_cliente: this.clienteFactura?.id || 0, id_sucursal: this.actualEmpresa?.id_caja || 1,
+            id_empresa: this.actualEmpresa?.id || 0, estado: 'Activa',
             valor_impuesto: 0, id_cierre_caja: nuevoCierre?.id||1,
             nro_comprobante: ''
           }
           try {
-            alert('nuevo venta')
+
             var respVenta = await this.ventaService.nuevoVenta(nuevaVenta);
             console.log('Nueva venta creada ',respVenta);
             this.shared.updatefacturaActual(respVenta.id || 0);
             this.shared.updatefacturaActualNo(respVenta.nro_comprobante);
-
+            this.shared.updatefacturaActiva(respVenta);
             this.menuItems = [
-                    { text: 'Factura',iconCss: 'em-icons e-file',items: [{ text: 'Iniciar', iconCss: 'em-icons e-new' },{ separator: true },{ text: 'Finalizar ', iconCss: 'em-icons e-save' }]},
-                    {text: 'Ver',iconCss: 'em-icons e-edit',items: [{ text: 'Imprimir', iconCss: 'em-icons e-file' },{ text: 'Reportes', iconCss: 'em-icons e-file' },]},
+                    {  text: 'Iniciar', iconCss: 'em-icons e-new' },{ separator: true },{ text: 'Finalizar', iconCss: 'em-icons e-save' },
                     {text: 'Factura No. 001-001-00000' + (await respVenta).nro_comprobante + '  Fecha: '+new Date().toDateString(),iconCss: 'em-icons e-error'}
                 ];
 
@@ -334,8 +349,126 @@ export class FacturaVentaComponent {
         }
 
       }
+      if (ev.item.text=="Finalizar"){
+        
+        //Si tengo factura abierta
+        if (this.ventaActual == 0 || this.facturaActiva==null){
+          Swal.fire('Informacion','No es posible finalizar factura, Inicie una');
+        }else{
+
+          //Actualizo datos de cabecera
+          let facturaModificar:Venta= this.facturaActiva;
+          console.log('factura a modificar', facturaModificar);
+          
+          facturaModificar.cantidad_productos = Number(this.cantidad);
+          facturaModificar.estado = 'Finalizada';
+          facturaModificar.monto_total = Number(this.total);
+          
+          facturaModificar.sub_total=Number(this.subTotal);
+          facturaModificar.total_impuestos=Number(this.impuesto);
+          facturaModificar.valor_impuesto=15;
+          
+          //Forma Pago
+          facturaModificar.referencia_tarjeta=this.tarjeta;
+          facturaModificar.pago_con= Number(this.pagacon);
+          facturaModificar.vuelto = Number(this.vuelto);
+          facturaModificar.saldo = Number(this.saldo);
+          
+          let respUpdteVenta = this.ventaService.editarVenta(facturaModificar.id || 0,facturaModificar);
+          console.log('factura modificada', respUpdteVenta);
+          
+          //Actualizo registro de cierre caja
+
+          //encero para que se cree una nueva
+          this.shared.updateDetallefactura(null);
+          this.shared.updatefacturaActual(0);
+          this.shared.updatefacturaActualNo('');
+          this.shared.updatefacturaActiva(null);
+          this.shared.updateCierreActual(0);
+          this.shared.updateClienteFactura(null);
+          this.shared.updateTotal(0);
+          this.shared.updateImpuesto(0);
+          this.shared.updateSubTotal(0);
+          this.shared.updateDescuento(0);
+          this.shared.updatecantProductos(0);
+          
+
+          this.clienteForm.patchValue({cedula: '',correo:'',nombres: '',direccion: '',ciudad: '',telefono: '',});
+          this.pagacon = 0;
+          this.vuelto = 0;
+          this.saldo = 0;
+          this.tarjeta = '';
+          Swal.fire('Informacion','Factura finalizada con exito, Imprima o genere reporte de la misma');
+          setTimeout(async () => {
+            await this.actualizaDats();
+          }, 3000);
+        }
+
+      }
     }
 
+
+    async actualizaDats(){
+
+    try {
+        var respVenta = await this.ventaService.getVentaActual();
+        console.log(respVenta,'Datos de Venta Actual Activa');
+        if (respVenta){
+          this.shared.updatefacturaActualNo(respVenta.nro_comprobante);
+          this.shared.updatefacturaActual(respVenta.id || 0);
+          this.shared.updatefacturaActiva(respVenta);
+          this.menuItems = [
+                  {  text: 'Iniciar', iconCss: 'em-icons e-new' },{ separator: true },{ text: 'Finalizar', iconCss: 'em-icons e-save' },
+                  {text: 'Factura No. 001-001-00000' + respVenta.nro_comprobante + '   Fecha:'+ new Date().toISOString(),iconCss: 'em-icons e-error'}
+              ];
+        }
+
+      try {
+          var clientesResp:any = await this.clienteServicio.getClientePorId(respVenta?.id_cliente.toString() || '');
+          console.log('cliente recibidoCCedula', clientesResp);
+          this.shared.updateClienteFactura(clientesResp);
+          if (clientesResp){
+            this.clienteForm.patchValue({
+              cedula: clientesResp.identificador_fiscal,
+              correo: clientesResp.email,
+              nombres: clientesResp.nombres,
+              direccion: clientesResp.direccion,
+              ciudad: 'Cuenca',
+              telefono: clientesResp.telefono,
+            });
+          }else{
+            this.clienteForm.patchValue({cedula: '',nombres: '',direccion: '',ciudad: '',telefono: '',});
+          }
+      } catch (error) {
+        this.clienteForm.patchValue({cedula: '',correo:'',nombres: '',direccion: '',ciudad: '',telefono: '',});
+      }
+
+
+      } catch (error) {
+        console.log('No hay venta activa');
+        this.shared.updatefacturaActualNo('');
+        this.shared.updatefacturaActual(0);
+        this.shared.updatefacturaActiva(null);
+        this.menuItems = [
+          {  text: 'Iniciar', iconCss: 'em-icons e-new' },{ separator: true },{ text: 'Finalizar', iconCss: 'em-icons e-save' },
+          {text: 'No hay venta activa, Ingrese datos de cliente y seleccione Factura -> Iniciar',iconCss: 'em-icons e-error'}
+        ];
+      }
+
+
+    }
+
+    cambiaPago = (ev:any) =>{
+      console.log('cambio pago', ev);
+      this.pagacon = ev.value;
+      if (this.pagacon < this.total){
+        this.saldo = Number(this.total) - Number(this.pagacon);
+        this.vuelto = 0;
+      }else{
+        this.vuelto = Number(this.pagacon) - Number(this.total);
+        this.saldo = 0;
+      }
+    }
 
 
 }

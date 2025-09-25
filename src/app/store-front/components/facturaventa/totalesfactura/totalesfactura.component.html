@@ -32,15 +32,15 @@
     </div>
     <div class="flex justify-between">
       <span class="opacity-80">Subtotal</span>
-      <span class="font-semibold">${{ this.subTotal.toFixed(2) }}</span>
+      <span class="font-semibold">${{ this.Mostrar(this.subTotal) }}</span>
     </div>
     <div class="flex justify-between">
       <span class="opacity-80">Impuesto (12%)</span>
-      <span class="font-semibold">${{ this.impuesto.toFixed(2) }}</span>
+      <span class="font-semibold">${{ this.Mostrar(this.impuesto) }}</span>
     </div>
     <div class="flex justify-between">
       <span class="opacity-80">Descuento</span>
-      <span class="font-semibold">-$ {{ this.desc.toFixed(2) }}</span>
+      <span class="font-semibold">-$ {{ this.Mostrar(this.desc) }}</span>
     </div>
   </div>
 
@@ -50,7 +50,7 @@
   <!-- Total -->
   <div class="flex justify-between items-center">
     <span class="text-2xl font-bold tracking-wide">Total</span>
-    <span class="text-4xl font-extrabold">$ {{ this.total.toFixed(2) }}</span>
+    <span class="text-4xl font-extrabold">$ {{ this.Mostrar(this.total) }}</span>
   </div>
 
   <!-- Brillo sutil animado -->
