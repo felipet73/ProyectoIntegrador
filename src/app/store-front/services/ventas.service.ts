@@ -11,8 +11,8 @@ export class VentasService {
   private supabaseService:SupabaseService = inject(SupabaseService);
   venta = computed(() => this._venta());
   token = computed(this._token);
-  public miEmpresa:Empresa|null  = JSON.parse(localStorage.getItem('MiEmpresa') || "") || null;
-  public acutualEmpresa:Empresa|null  = JSON.parse(localStorage.getItem('ActualEmpresa') || "") || null;
+  public miEmpresa:Empresa|null  = localStorage.getItem('MiEmpresa') ? (JSON.parse(localStorage.getItem('MiEmpresa') || "")):null;
+  public acutualEmpresa:Empresa|null  = localStorage.getItem('ActualEmpresa') ? (JSON.parse(localStorage.getItem('ActualEmpresa') || "")):null;
 
   authService = inject(AuthService);
 

@@ -41,8 +41,8 @@ import { SharedService } from '@store-front/services/shared.service';
 export class FrontNavbarComponent {
 
 
-  public miEmpresa:Empresa|null  = JSON.parse(localStorage.getItem('MiEmpresa') || "") || null;
-  public actualEmpresa:Empresa|null  = JSON.parse(localStorage.getItem('ActualEmpresa') || "") || null;
+   public miEmpresa:Empresa|null  = localStorage.getItem('MiEmpresa') ? (JSON.parse(localStorage.getItem('MiEmpresa') || "")):null;
+  public actualEmpresa:Empresa|null  = localStorage.getItem('ActualEmpresa') ? (JSON.parse(localStorage.getItem('ActualEmpresa') || "")):null;
 
   public Empresa: string[] = [this.miEmpresa ? this.miEmpresa.nombre : 'MiEmpresa'];
   public Cargo: string[] = ['Admin'];

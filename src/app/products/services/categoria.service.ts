@@ -11,8 +11,9 @@ export class CategoriasService {
   private supabaseService:SupabaseService = inject(SupabaseService);
   categoria  = computed(() => this._categoria());
   token = computed(this._token);
-  public miEmpresa:Empresa|null  = JSON.parse(localStorage.getItem('MiEmpresa') || "") || null;
-  public acutualEmpresa:Empresa|null  = JSON.parse(localStorage.getItem('ActualEmpresa') || "") || null;
+  public miEmpresa:Empresa|null  = localStorage.getItem('MiEmpresa') ? (JSON.parse(localStorage.getItem('MiEmpresa') || "")):null;
+  public acutualEmpresa:Empresa|null  = localStorage.getItem('ActualEmpresa') ? (JSON.parse(localStorage.getItem('ActualEmpresa') || "")):null;
+
   constructor() {}
 
   // Obtener todos

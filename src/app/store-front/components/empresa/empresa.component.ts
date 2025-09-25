@@ -53,7 +53,8 @@ import { Empresa } from '../interfaces/empresa.interface';
     public addButtonDisabled : boolean = true;
     public deleteButtonDisabled : boolean = true;
 
-    public miEmpresa:Empresa|null  = JSON.parse(localStorage.getItem('MiEmpresa') || "") || null;
+    public miEmpresa:Empresa|null  = localStorage.getItem('MiEmpresa') ? (JSON.parse(localStorage.getItem('MiEmpresa') || "")):null;
+    public acutualEmpresa:Empresa|null  = localStorage.getItem('ActualEmpresa') ? (JSON.parse(localStorage.getItem('ActualEmpresa') || "")):null;
 
     //Collection of data
     public data1: object[] = [

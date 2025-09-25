@@ -40,8 +40,8 @@ import { Empresa } from '../interfaces/empresa.interface';
             this.ImageEditorInstance.theme = window.location.href.split('#')[1].split('/')[1];
         }
     }
-    public miEmpresa:Empresa|null  = JSON.parse(localStorage.getItem('MiEmpresa') || "") || null;
-    public actualEmpresa:Empresa|null  = JSON.parse(localStorage.getItem('ActualEmpresa') || "") || null;
+     public miEmpresa:Empresa|null  = localStorage.getItem('MiEmpresa') ? (JSON.parse(localStorage.getItem('MiEmpresa') || "")):null;
+    public actualEmpresa:Empresa|null  = localStorage.getItem('ActualEmpresa') ? (JSON.parse(localStorage.getItem('ActualEmpresa') || "")):null;
     
     public imageLoaded = (): void => {
         if (this.imgSrc === '') {
