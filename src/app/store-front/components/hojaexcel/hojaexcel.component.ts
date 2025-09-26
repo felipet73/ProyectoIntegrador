@@ -18,6 +18,9 @@ import { DetalleVentaService } from '@store-front/services/detalleventa.service'
 import { ProductsService } from '@products/services/products.service';
 import { ClienteProv } from 'src/app/clientesprov/interfaces/clienteprov.interface';
 import { Venta } from '../interfaces/factura.interfaces';
+import { OpenAIService } from '@store-front/services/openai.service';
+import Swal from 'sweetalert2';
+
 
 
 L10n.load({
@@ -359,46 +362,117 @@ L10n.load({
 imports: [
         DropDownButtonModule,
         SpreadsheetAllModule
-    ],    
-    standalone: true,
+    ],
+
+standalone: true,
     selector: 'hojaexcel-container',
-    templateUrl: 'hojaexcel.component.html'
+    template: `<ejs-spreadsheet #spreadsheet locale='es-ES' height="90vh" (beforeOpen)='beforeOpen($event)' openUrl='https://services.syncfusion.com/angular/production/api/spreadsheet/open' allowOpen='true' [allowSave]="true" saveUrl='http://localhost:3000/save' 
+                
+                (beforeSave)="beforeSave($event)" > </ejs-spreadsheet>`
 })
 export class HojaExcelComponent {
     @ViewChild('spreadsheet') public spreadsheet!: SpreadsheetComponent;
 
-   public miEmpresa:Empresa|null  = localStorage.getItem('MiEmpresa') ? (JSON.parse(localStorage.getItem('MiEmpresa') || "")):null;
+  public miEmpresa:Empresa|null  = localStorage.getItem('MiEmpresa') ? (JSON.parse(localStorage.getItem('MiEmpresa') || "")):null;
   public actualEmpresa:Empresa|null  = localStorage.getItem('ActualEmpresa') ? (JSON.parse(localStorage.getItem('ActualEmpresa') || "")):null;
 
   authService = inject(AuthService);
-  constructor(private clienteServicio:ClienteProvService, private shared: SharedService, private ventaService:VentasService,
-        private empresaServicio:EmpresasService, private ventaDetalleServicio:DetalleVentaService, private productoServicio:ProductsService
+  constructor(private clienteServicio:ClienteProvService, private shared: SharedService, private ventaService:VentasService, private openAI: OpenAIService,
+        private empresaServicio:EmpresasService, private ventaDetalleServicio:DetalleVentaService, private productoServicio:ProductsService,        
       ) {  }
+      
+
+    generarReporteIA2(alldetalles:any, allventas:any) {
+
+            const prompt = `       
+        Genera un reporte en base a mis ventas
+        ${ JSON.stringify(allventas) }
+
+        Incluye
+        - Que clientes estan comprando mas.
+        - Una lista de clientes en el mismo formato y que productos compran mas.
+        - Una conclusion de 50 palabras que analice como van las ventas con palabras sencillas y que recomedarias para mejorarlas
+        Devuélvelo en tabla separada por '|' lista para insertar en un spreadsheet.
+            `;
 
 
+          this.openAI.generarReporte(prompt).subscribe({
+            next: (res: any) => {
+              const texto = res.choices[0].message.content;
+              this.llenarSpreadsheet(texto, 'ReporteIA-2');
+            },
+            error: err => console.error('Error API:', err)
+          });
+        }
 
-      toolbarOptions = {
-        home: true,
-        insert: true,
-        data: true,
-        custom: [
-          {
-            type: 'button',
-            text: 'Generar Reporte IA',
-            icon: 'file-add',
-            click: () => this.generarReporte()
-          }
-        ]
-      };
+        private llenarSpreadsheet(texto: string, hoja:string) {
+          console.log(texto, 'Texto de respuesta')
+        this.spreadsheet.insertSheet([{ index: 0, name: hoja }]);
 
-      generarReporte() {
-        console.log('Click en botón personalizado');
-        // Aquí tu lógica: llamar OpenAI, llenar celdas, etc.
-      }
+          const lineas = texto.split('\n').filter(l => l.trim() !== '');
+          const matriz = lineas.map(l =>
+            l.split('|').map(c => c.trim()).filter(c => c)
+          );
+
+          // Llenar hoja activa usando dataSource
+          this.spreadsheet.updateRange(
+            { dataSource: matriz }
+          );
+         
+        }
+
+
+         generarReporteIA(alldetalles:any, allventas:any) {
+
+            const prompt = `
+        Genera un informe de ventas con los siguientes datos:
+        Codigo|Producto|Cantidad|PrecioUnitario|Total
+        ${ JSON.stringify(alldetalles) }
+
+        Incluye:
+        - Productos más vendidos.
+        - Proyección de ventas para el próximo mes.
+        Devuélvelo en tabla separada por '|' lista para insertar en un spreadsheet.
+        
+            `;
+
+
+          this.openAI.generarReporte(prompt).subscribe({
+            next: (res: any) => {
+              const texto = res.choices[0].message.content;
+              this.llenarSpreadsheet(texto, 'ReporteIA-1');
+            },
+            error: err => console.error('Error API:', err)
+          });
+        }
+
+       
+      
+
 
 
     //ejecutar al inicializar el componente
     async ngOnInit() {
+
+
+      Swal.fire({
+          title: 'Procesando...',
+          text: 'Generando reportes, por favor espere',
+          timer: 18000,                // 8 segundos
+          allowOutsideClick: false,
+          didOpen: () => {
+            Swal.showLoading();
+          },
+          willClose: () => {
+            // Aquí puedes hacer algo cuando se cierre el loading
+            Swal.fire({
+              icon: 'success',
+              title: '¡Listo!',
+              text: 'La operación ha finalizado.'
+            });
+          }
+        });
+
 
       //cargar todos los clietes
       let allClientes = await this.clienteServicio.getAllClientes();
@@ -406,7 +480,7 @@ export class HojaExcelComponent {
       
       setTimeout(() => {
         console.log(allClientes?.map(c => [c.identificador_fiscal, c.nombres, c.email, c.direccion, c.telefono]), 'mapeado');
-        this.spreadsheet.sheets[0].name = 'Nueva Hoja';
+        this.spreadsheet.sheets[0].name = 'Reportes';
                   
         this.spreadsheet.insertSheet([{ index: 0, name: 'ClientesProveedores' }]);
           var toadd = allClientes?.map(c => [c.identificador_fiscal, c.nombres, c.email, c.direccion, c.telefono]);
@@ -423,34 +497,7 @@ export class HojaExcelComponent {
       
       let allVentas:Venta[] = await this.ventaService.getAllVentas();
       console.log('ventas', allVentas);
-
-      
-      /*this.spreadsheet.insertSheet([{ index: 0, name: 'Ventas' }]);
-      
-      this.spreadsheet.updateCell({ value: 'Factura No.' }, 'B4');
-      this.spreadsheet.updateCell({ value: 'Cliente' }, 'C4');
-      this.spreadsheet.updateCell({ value: 'Nombres' }, 'D4');
-      this.spreadsheet.updateCell({ value: 'Direccion' }, 'E4');
-      this.spreadsheet.updateCell({ value: 'Telefono' }, 'F4');
-      this.spreadsheet.updateCell({ value: 'Telefono' }, 'F4');*/
-      
-      /*allClientes?.forEach((item:ClienteProv, i) => {
-        const row = i + 5;
-        this.spreadsheet.updateCell({ value: item.identificador_fiscal }, `B${row}`);
-        this.spreadsheet.updateCell({ value: item.nombres }, `C${row}`);
-        this.spreadsheet.updateCell({ value: item.email }, `D${row}`);
-        this.spreadsheet.updateCell({ value: item.direccion }, `E${row}`);
-        this.spreadsheet.updateCell({ value: item.telefono }, `F${row}`);        
-      });
-      
-      this.spreadsheet.autoFit('A1:F1');
-      this.spreadsheet.autoFit('A4:F4');
-      this.spreadsheet.autoFit('B4:B'+(allClientes?.length!+4));
-      this.spreadsheet.autoFit('C4:C'+(allClientes?.length!+4));
-      this.spreadsheet.autoFit('D4:D'+(allClientes?.length!+4));
-      this.spreadsheet.autoFit('E4:E'+(allClientes?.length!+4));
-      this.spreadsheet.autoFit('F4:F'+(allClientes?.length!+4));*/
-      
+     
       let allDetalles = await this.ventaDetalleServicio.getAllDetalleVentas();
       console.log('detalles', allDetalles);
 
@@ -497,8 +544,11 @@ export class HojaExcelComponent {
             },            
           );
       }, 1000);
-
       
+      setTimeout(() => {    
+        this.generarReporteIA(allDetalles, allVentas)
+        this.generarReporteIA2(allDetalles, allVentas)
+      }, 2000);
     }
 
     

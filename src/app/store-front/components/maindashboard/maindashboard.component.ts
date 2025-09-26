@@ -12,6 +12,21 @@ import { ChangeDetectorRef } from '@angular/core';
 import { ListBoxModule } from '@syncfusion/ej2-angular-dropdowns';
 import { EmpresasService } from '@store-front/services/empresas.service';
 
+
+import { SupabaseService } from '../../../supabase/supabase.service';
+import { ClienteProvService } from 'src/app/clientesprov/services/clienteprov.service';
+import { SharedService } from '@store-front/services/shared.service';
+import { VentasService } from '@store-front/services/ventas.service';
+import { Empresa } from '../interfaces/empresa.interface';
+import { AuthService } from '@auth/services/auth.service';
+import { DetalleVentaService } from '@store-front/services/detalleventa.service';
+import { ProductsService } from '@products/services/products.service';
+import { ClienteProv } from 'src/app/clientesprov/interfaces/clienteprov.interface';
+import { Venta } from '../interfaces/factura.interfaces';
+import { OpenAIService } from '@store-front/services/openai.service';
+import Swal from 'sweetalert2';
+
+
 Maps.Inject(Legend, Marker, MapsTooltip);
 
 /**
@@ -36,13 +51,23 @@ export class MainDashboardComponent {
     @ViewChild('lineChart') public lineChart!: ChartComponent;
     @ViewChild('colchart') public colchart!: ChartComponent;
 
+    public miEmpresa:Empresa|null  = localStorage.getItem('MiEmpresa') ? (JSON.parse(localStorage.getItem('MiEmpresa') || "")):null;
+    public actualEmpresa:Empresa|null  = localStorage.getItem('ActualEmpresa') ? (JSON.parse(localStorage.getItem('ActualEmpresa') || "")):null;
 
     //Empresas
     //public empresaService!:EmpresasService;
     empresaService = inject(EmpresasService);
 
     public dataEmpresas!: { [key: string]: Object }[];
-    //constructor() {}
+    
+    public cellSpacing: number[] =  [5, 5];
+    public aspectRatio : any = 100 / 85;
+    public centerTitle: any;
+    
+    constructor(private cdr: ChangeDetectorRef,
+        private clienteServicio:ClienteProvService, private shared: SharedService, private ventaService:VentasService, private openAI: OpenAIService,
+        private empresaServicio:EmpresasService, private ventaDetalleServicio:DetalleVentaService, private productoServicio:ProductsService,     
+    ) {this.centerTitle = (document.createElement('div') as HTMLElement);}
 
     // Sidebar data
     public enableDock: boolean = true;
@@ -112,56 +137,9 @@ export class MainDashboardComponent {
     ];
 
     // Map data
-    public zoomSettings: Object = { enable: false };
-    public maplegendSettings: Object = { visible: false };
-    // public mapLoad = (args: ILoadEventArgs) => {
-    //   let theme: string = location.hash.split('/')[1];
-    //   theme = theme ? theme : 'Material';
-    //   if (args.maps) {
-    //     args.maps.theme = <MapsTheme>(theme.charAt(0).toUpperCase() + theme.slice(1)).replace(/-dark/i, 'Dark');
-    //   }
-    // }
-    // public  layers: object[] = [
-    //     {
-    //         shapeData: new MapAjax('./source/dashboard-layout/worldmap.json'),
-    //         shapePropertyPath: 'continent',
-    //         shapeDataPath: 'continent',
-    //         dataSource: new MapAjax('./source/dashboard-layout/datasource.json'),
-    //         shapeSettings: {
-    //             colorValuePath: 'color',
-    //         },
-    //         markerSettings: [
-    //             {
-    //                 visible: true,
-    //                 dataSource: [
-    //                     { latitude: 37.6276571, longitude: -122.4276688, name: 'San Bruno' },
-    //                     { latitude: 33.5302186, longitude: -117.7418381, name: 'Laguna Niguel' },
-    //                     { latitude: 40.7424509, longitude: -74.0081468, name: 'New York' },
-    //                     { latitude: -23.5268201, longitude: -46.6489927, name: 'Bom Retiro' },
-    //                     { latitude: 43.6533855, longitude: -79.3729994, name: 'Toronto' },
-    //                     { latitude: 48.8773406, longitude: 2.3299627, name: 'Paris' },
-    //                     { latitude: 52.4643089, longitude: 13.4107368, name: 'Berlin' },
-    //                     { latitude: 19.1555762, longitude: 72.8849595, name: 'Mumbai' },
-    //                     { latitude: 35.6628744, longitude: 139.7345469, name: 'Minato' },
-    //                     { latitude: 51.5326602, longitude: -0.1262422, name: 'London' }
-    //                 ],
-    //                 shape: 'Image',
-    //                 imageUrl: 'https://ej2.syncfusion.com/demos/src/maps/images/ballon.png',
-    //                 height: 20,
-    //                 width: 20,
-    //                 offset: {
-    //                     y: -10,
-    //                     x: 0
-    //                 },
-    //                 tooltipSettings: {
-    //                     visible: true,
-    //                     valuePath: 'name'
-    //                 },
-    //                 animationDuration: 0
-    //             },
-    //         ]
-    //     },
-    // ];
+    public zoomSettings: Object = { enable: true };
+    public maplegendSettings: Object = { visible: true };
+    
 
     // ColumnChart properties
     public primaryXAxis: object = {
@@ -198,6 +176,11 @@ export class MainDashboardComponent {
     public linelegendSettings: Object = { visible: false };
     public widthValue: any = '100%';
     public heightValue: any = '100%';
+    
+    
+    
+
+
     public columnData: any = [
         { x: new Date(2002, 0, 1), y: 2.2 }, { x: new Date(2003, 0, 1), y: 3.4 },
         { x: new Date(2004, 0, 1), y: 2.8 }, { x: new Date(2005, 0, 1), y: 1.6 },
@@ -205,6 +188,8 @@ export class MainDashboardComponent {
         { x: new Date(2008, 0, 1), y: 2.9 }, { x: new Date(2009, 0, 1), y: 3.8 },
         { x: new Date(2010, 0, 1), y: 1.4 }, { x: new Date(2011, 0, 1), y: 3.1 }
     ];
+    
+    
     public columnData1: any = [
         { x: new Date(2002, 0, 1), y: 2 }, { x: new Date(2003, 0, 1), y: 1.7 },
         { x: new Date(2004, 0, 1), y: 1.8 }, { x: new Date(2005, 0, 1), y: 2.1 },
@@ -212,10 +197,17 @@ export class MainDashboardComponent {
         { x: new Date(2008, 0, 1), y: 1.5 }, { x: new Date(2009, 0, 1), y: 2.8 },
         { x: new Date(2010, 0, 1), y: 1.5 }, { x: new Date(2011, 0, 1), y: 2.3 }
     ];
+
+
+
+
+
     public lineborder: object = { color: 'transparent' };
 
     // PieChart data
     public center: object =  { x: '50%', y: '50%' };
+
+
     public piedataSource: any = [
         { 'x': 'Desktop', y: 37, text: '60%' }, { 'x': 'Mobile', y: 17, text: '10%' },
         { 'x': 'Tablet', y: 19, text: '20%' }
@@ -263,19 +255,13 @@ export class MainDashboardComponent {
             return '13px';
         }
     }
-    public cellSpacing: number[] =  [5, 5];
-    public aspectRatio : any = 100 / 85;
-    public centerTitle: any;
-    constructor(private cdr: ChangeDetectorRef){
-        this.centerTitle = (document.createElement('div') as HTMLElement);
-      }
     ngAfterViewInit() {
     this.centerTitle.innerHTML = 'Active <br> users  &nbsp';
     this.centerTitle.style.position = 'absolute';
     this.centerTitle.style.visibility = 'hidden';
     }
 
-    ngOnInit():void{
+    async ngOnInit(){
             this.cdr.detectChanges();
             this.empresaService.getAllEmpresasUsers(5).then(empresas => {
               console.log(empresas)
@@ -286,8 +272,59 @@ export class MainDashboardComponent {
                 this.dataEmpresas = empresas.map(elemento => {
                   return { text: 'Su Empresa :' + elemento.nombre, pic: 'javascript', description: elemento.iso + ' - email:' + elemento.correo + ' direccion ' +elemento.direccion_fiscal }
                 })
-              }
+              }});
+
+
+      let allClientes = await this.clienteServicio.getAllClientes();
+      console.log('clientes', allClientes);
+      let allVentas:Venta[] = await this.ventaService.getAllVentas();
+      console.log('ventas', allVentas);
+      let allDetalles = await this.ventaDetalleServicio.getAllDetalleVentas();
+      console.log('detalles', allDetalles);
+      let allProductos = await this.productoServicio.getAllProductos();
+      console.log('productos', allProductos);
+      //unir ventas con clientes
+      allVentas = allVentas.map(v => {
+        const cliente = allClientes?.find(c => c.id === v.id_cliente) || null;
+        return { ...v, cliente };
       });
+
+      /*this.columnData = [
+        allVentas.map( (dato:any) =>         
+        ({ x: dato.fecha, y: dato.cantidad_productos })
+      )];
+      this.columnData1 = 
+        allVentas.map( (dato:any) => {
+          return { x: dato.fecha, y: dato.cantidad_productos }}
+      );*/
+
+      //console.log('data de grafico', [allVentas.map( (dato:any) => {return { x: dato.fecha, y: dato.cantidad_productos }})])
+      let acc:any=[];
+      for(let i=0; i < allDetalles.length ; i++){
+        let venta = allDetalles[i];
+        let existe = acc.find((item:any) => item.x == venta.descripcion);
+        if (existe) {
+          // Si ya existe, sumamos la cantidad y el total
+          existe.y += venta.cantidad;
+          existe.text = (venta.cantidad/allDetalles.length*100)+'%';
+        } else {
+          // Si no existe, agregamos una copia del objeto
+          acc.push({ 'x': venta.descripcion, y: venta.cantidad, text: (venta.cantidad/allDetalles.length*100)+'%' });
+        }        
+      };
+      console.log(acc, 'resumen');
+      this.piedataSource = acc;
+
+      
+
+      //unir detalleventas con venta cliente y productos
+      /*allDetalles = allDetalles.map(dv => {
+        const venta = allVentas.find(v => v.id === dv.id_venta) || null;
+        const producto = allProductos.find(p => p.id === dv.id_producto) || null;
+        return { ...dv, venta, producto };
+      });*/
+      
+
 
     }
 }
