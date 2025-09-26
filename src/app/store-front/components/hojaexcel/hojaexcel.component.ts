@@ -359,11 +359,10 @@ L10n.load({
 imports: [
         DropDownButtonModule,
         SpreadsheetAllModule
-    ],
-
-standalone: true,
+    ],    
+    standalone: true,
     selector: 'hojaexcel-container',
-    template: `<ejs-spreadsheet #spreadsheet locale='es-ES' height="90vh" (beforeOpen)='beforeOpen($event)' openUrl='https://services.syncfusion.com/angular/production/api/spreadsheet/open' allowOpen='true' [allowSave]="true" saveUrl='http://localhost:3000/save' (beforeSave)="beforeSave($event)" > </ejs-spreadsheet>`
+    templateUrl: 'hojaexcel.component.html'
 })
 export class HojaExcelComponent {
     @ViewChild('spreadsheet') public spreadsheet!: SpreadsheetComponent;
@@ -375,6 +374,28 @@ export class HojaExcelComponent {
   constructor(private clienteServicio:ClienteProvService, private shared: SharedService, private ventaService:VentasService,
         private empresaServicio:EmpresasService, private ventaDetalleServicio:DetalleVentaService, private productoServicio:ProductsService
       ) {  }
+
+
+
+      toolbarOptions = {
+        home: true,
+        insert: true,
+        data: true,
+        custom: [
+          {
+            type: 'button',
+            text: 'Generar Reporte IA',
+            icon: 'file-add',
+            click: () => this.generarReporte()
+          }
+        ]
+      };
+
+      generarReporte() {
+        console.log('Click en botón personalizado');
+        // Aquí tu lógica: llamar OpenAI, llenar celdas, etc.
+      }
+
 
     //ejecutar al inicializar el componente
     async ngOnInit() {
